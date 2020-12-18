@@ -1,8 +1,10 @@
 /* eslint-disable max-len */
 import React, { useContext } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import Animated, { Extrapolate, interpolate } from "react-native-reanimated";
-
+import Animated, {
+  Extrapolate,
+  interpolateNode,
+} from "react-native-reanimated";
 import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
 import { MIN_HEADER_HEIGHT } from "./Header";
 import appcontext from "appcontext";
@@ -44,7 +46,7 @@ export interface TabModel {
 }
 
 interface ContentProps {
-  y: Animated.Node<number>;
+  y: number;
   renderContent: () => JSX.Element;
   onMeasurement?: (index: number, tab: TabModel) => void;
 }
@@ -53,7 +55,7 @@ export default ({ y, renderContent, onMeasurement }: ContentProps) => {
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
 
-  const opacity = interpolate(y, {
+  const opacity = interpolateNode(y, {
     inputRange: [
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT - 100,
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT,

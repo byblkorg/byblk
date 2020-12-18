@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   contentContainerStyle: {
     backgroundColor: "#F3F4F9",
-    minHeight: "100%",
+    minHeight: "120%",
   },
   panelHandle: {
     width: 40,

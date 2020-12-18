@@ -1,14 +1,15 @@
 import React, { useRef, useState } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { Slide, SLIDE_HEIGHT, SubSlide, Dot } from "components";
-import {
-  onScrollEvent,
-  interpolateColor,
-  useScrollHandler,
-} from "react-native-redash";
-import Animated, { divide } from "react-native-reanimated";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "App";
+import Animated, {
+  divide,
+  interpolateColors,
+  useSharedValue,
+  useAnimatedScrollHandler,
+  runOnJS,
+} from "react-native-reanimated";
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -51,18 +52,27 @@ const slides = [
 const BORDER_RADIUS = 75;
 
 export default function WelcomeSpinner({ navigation }: WelcomeSpinnerProps) {
-  const { x } = useScrollHandler();
-
-  const onScroll = onScrollEvent({ x });
-
-  const backgroundColor = interpolateColor(x, {
-    inputRange: slides.map((_, i) => i * width),
-    outputRange: slides.map((slide) => slide.color),
-  });
-
   const scroll = useRef<Animated.ScrollView>(null);
 
-  console.log(x);
+  const [_, setState] = useState(0);
+
+  const x = useSharedValue(0);
+
+  function updateState(val: number) {
+    "worklet";
+    runOnJS(setState)(val);
+  }
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    "worklet";
+    updateState(event.contentOffset.x);
+    x.value = event.contentOffset.x;
+  });
+
+  const backgroundColor = interpolateColors(x.value, {
+    inputRange: slides.map((_, i) => i * width),
+    outputColorRange: slides.map((slide) => slide.color),
+  });
 
   return (
     <View style={styles.container}>
@@ -74,16 +84,24 @@ export default function WelcomeSpinner({ navigation }: WelcomeSpinnerProps) {
 
       <View style={styles.footer}>
         <Animated.View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor,
-          }}
+          style={[
+            {
+              ...StyleSheet.absoluteFillObject,
+            },
+            {
+              backgroundColor,
+            },
+          ]}
         />
 
         <View style={[styles.footerContent, {}]}>
           <View style={styles.pagination}>
             {slides.map((slide, index) => (
-              <Dot key={index} {...{ index }} currentIndex={divide(x, width)} />
+              <Dot
+                key={index}
+                {...{ index }}
+                currentIndex={divide(x.value, width)}
+              />
             ))}
           </View>
 
@@ -93,8 +111,8 @@ export default function WelcomeSpinner({ navigation }: WelcomeSpinnerProps) {
             decelerationRate="fast"
             showsHorizontalScrollIndicator={false}
             bounces={false}
-            scrollEventThrottle={1}
-            {...{ onScroll }}
+            scrollEventThrottle={16}
+            {...{ onScroll: scrollHandler }}
             ref={scroll}
           >
             {slides.map(({ subtitle, description }, index) => {

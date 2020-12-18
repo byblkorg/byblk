@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { Category, SectionHeader } from "components";
+import Category from "./Category";
+import SectionHeader from "./SectionHeader";
 
 export default function CategoryBar({ data = [] }: { data: any[] }) {
   return (

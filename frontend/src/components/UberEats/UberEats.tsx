@@ -5,7 +5,11 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, {
+  runOnJS,
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 import { onScrollEvent, useValue } from "react-native-redash";
 
 import HeaderImage from "./HeaderImage";
@@ -35,10 +39,25 @@ export default ({
 }) => {
   const scrollView = useRef<Animated.ScrollView>(null);
   const [tabs, setTabs] = useState(defaultTabs);
-  const y = useValue(0);
-  const onScroll = onScrollEvent({ y });
+  // const y = useValue(0);
+  // const onScroll = onScrollEvent({ y });
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
+
+  const [_, setState] = useState(0);
+  const y = useSharedValue(0);
+
+  function updateState(val: number) {
+    "worklet";
+    runOnJS(setState)(val);
+  }
+
+  const onScroll = useAnimatedScrollHandler((event) => {
+    "worklet";
+    updateState(event.contentOffset.y);
+    y.value = event.contentOffset.y;
+  });
+
   return (
     <View
       style={[
@@ -50,7 +69,7 @@ export default ({
         },
       ]}
     >
-      <HeaderImage {...{ y, imageSrc }} />
+      <HeaderImage {...{ y: y.value, imageSrc }} />
       <Animated.ScrollView
         ref={scrollView}
         style={StyleSheet.absoluteFill}
@@ -62,11 +81,11 @@ export default ({
           //   tabs[index] = tab;
           //   setTabs([...tabs]);
           // }}
-          {...{ y }}
+          {...{ y: y.value }}
           renderContent={renderContent}
         />
       </Animated.ScrollView>
-      <Header {...{ y, tabs, scrollView, title }} />
+      <Header {...{ y: y.value, tabs, scrollView, title }} />
     </View>
   );
 };
