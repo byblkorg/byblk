@@ -1,0 +1,52 @@
+Resources:
+  BusinessTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ByBlkBusinessTable-${self:custom.env} # name of the table
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: sortKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id # partition key
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: sortKey-index
+          KeySchema:
+            - AttributeName: sortKey
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ByBlkUserTable-${self:custom.env} # name of the table
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id # partition key
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+  InviteTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ByBlkInviteTable-${self:custom.env} # name of the table
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: inviteCode
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id # partition key
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: inviteCode-index
+          KeySchema:
+            - AttributeName: inviteCode
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL

@@ -1,0 +1,9 @@
+dist/*
+resources/*
+scripts/*
+types/*
+tsconfig.json
+src/*
+jest.config.json
+serverless.yml
+lambdas/*

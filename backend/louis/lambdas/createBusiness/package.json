@@ -1,0 +1,31 @@
+{
+  "name": "createbusiness",
+  "version": "1.0.0",
+  "description": "Creates a cognito user and then creates a business  on the business table on dynamodb.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "local": "bash utils/test.sh",
+    "zipit": "bash utils/zipit.sh",
+    "package": "tsc && npm run zipit",
+    "deploy": "aws lambda update-function-code --region us-east-1 --profile byblk --function-name CreateBusiness --zip-file fileb://createBusiness.zip"
+  },
+  "author": "Ashton Morris",
+  "license": "ISC",
+  "dependencies": {
+    "@gcmp/geoffrey": "0.0.7",
+    "@gcmp/types": "0.0.6",
+    "aws-appsync": "^4.0.2",
+    "aws-lambda": "^1.0.6",
+    "graphql-tag": "^2.11.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.67",
+    "@types/node": "^14.14.22",
+    "aws-sdk": "^2.834.0",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}

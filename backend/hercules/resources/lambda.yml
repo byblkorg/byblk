@@ -1,0 +1,16 @@
+InvokeInviteBusiness:
+  handler: index.handler
+  name: InvokeInviteBusiness-${self:custom.env}
+  description: This lambda invokes the invite business step function
+  runtime: nodejs12.x
+  timeout: 30
+  # role: arn:aws:iam::362759988993:role/LambdaInvokeRole
+  environment:
+    region: ${self:custom.region}
+  tags:
+    ByBlk: ByBlk
+  package:
+    include:
+      - dist/**
+    artifact: ./dist/invokeInviteBusiness.zip
+    individually: true

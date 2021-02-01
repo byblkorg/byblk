@@ -1,0 +1,56 @@
+service: byblk-louis
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stackName: BYBLK-LOUIS
+  region: us-east-1 # TODO stand these up in multiple regions and have a load balancer
+  endpointType: regional
+  profile: byblk
+  tags:
+    BYBLK: BYBLK
+
+custom:
+  environments:
+    Dev: dev
+    Prod: prod
+    QA: qa
+
+plugins:
+  - serverless-step-functions
+
+resources:
+  # s3 buckets
+  # - ${file(resources/s3-bucket.yml)}
+
+functions:
+  - ${file(resources/lambdas.yml)}
+
+stepFunctions:
+  stateMachines:
+    inviteBusiness:
+      name: InviteBusiness
+      tags:
+        Louis: Louis
+      definition:
+        Comment: "A state machine for inviting a business to join ByBlk"
+        StartAt: GenerateInviteCode
+        States:
+          GenerateInviteCode:
+            Type: Task
+            Resource: arn:aws:lambda:us-east-1:750494921159:function:CreateBusiness
+            InputPath: $.invitee
+            ResultPath: $.invitee
+            Next: CreateBusiness
+          CreateBusiness:
+            Type: Task
+            Resource: arn:aws:lambda:us-east-1:750494921159:function:CreateBusiness
+            InputPath: $.invitee
+            ResultPath: $.invitee
+            Next: SendText
+          SendText:
+            Type: Task
+            Resource: arn:aws:lambda:us-east-1:750494921159:function:SendText
+            InputPath: $.invitee
+            ResultPath: $.invitee
+            End: true

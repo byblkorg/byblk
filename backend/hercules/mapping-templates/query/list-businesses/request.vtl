@@ -1,0 +1,17 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#sortKey = :sortKey",
+        "expressionNames" : {
+            "#sortKey": "sortKey"
+        },
+        "expressionValues" : {
+            ":sortKey": { "S" : "$context.args.sortKey" }
+        }
+    },
+    "index": "sortKey-index",
+    "scanIndexForward" : false,
+    "consistentRead" : false,
+    "select" : "ALL_ATTRIBUTES"
+}
