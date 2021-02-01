@@ -1,0 +1,18 @@
+readEmail:
+  handler: geoffrey/lambdas/readEmail/src/index.handler
+  name: ReadEmail
+  description: This lambda reads emails and returns its contents as JSON.
+  runtime: nodejs12.x
+  timeout: 30
+  tags:
+    ByBlk: Geoffrey
+  package:
+    include:
+      - dist/**
+    artifact: dist/readEmail.zip
+    individually: true
+  events:
+    - http:
+        path: api/readEmail
+        method: post
+        cors: true

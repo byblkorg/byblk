@@ -1,0 +1,38 @@
+# https://github.com/sid88in/serverless-appsync-plugin
+
+service: byblk-appsync
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: byblk
+  stackName: ByBlkAppSyncCloudFormationStack-${self:custom.env}
+  region: ${opt:region}
+  endpointType: regional
+  tags:
+    ByBlk: ByBlk
+
+plugins:
+  - serverless-appsync-plugin
+
+resources:
+  # DynamoDB tables
+  - ${file(resources/dynamodb-table.yml)}
+
+functions:
+  - ${file(resources/lambda.yml)}
+
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or fallsback to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  # Set the table name here so we can use it while testing locally
+  env: ${self:custom.stage}
+  # region
+  region: ${opt:region}
+  defaultUserPoolId: us-east-1_FCQ7znFrz
+  userPoolId: us-east-1_FCQ7znFrz
+  # cognito client id
+  clientId: 4oaob072kav0j89hd62fr8qk4k
+  # appsync plugin configuration
+  appSync: ${file(resources/app-sync.yml)}

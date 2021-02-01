@@ -1,0 +1,86 @@
+name: ByBlkAppsync-${self:custom.env}
+authenticationType: AMAZON_COGNITO_USER_POOLS
+userPoolConfig:
+  awsRegion: ${self:custom.region}
+  defaultAction: ALLOW
+  userPoolId: ${self:custom.userPoolId}
+additionalAuthenticationProviders:
+  - authenticationType: AWS_IAM
+dataSources:
+  - type: AMAZON_DYNAMODB
+    name: BusinessTable
+    config:
+      tableName: ByBlkBusinessTable-${self:custom.env}
+  - type: AMAZON_DYNAMODB
+    name: UserTable
+    config:
+      tableName: ByBlkUserTable-${self:custom.env}
+  - type: AMAZON_DYNAMODB
+    name: InviteTable
+    config:
+      tableName: ByBlkInviteTable-${self:custom.env}
+  - type: AWS_LAMBDA
+    name: InvokeInviteBusiness
+    config:
+      lambdaFunctionArn: arn:aws:lambda:us-east-1:750494921159:function:InvokeInviteBusiness-Dev
+mappingTemplates:
+  #### queries
+  - dataSource: BusinessTable
+    type: Query
+    field: listBusinesses
+    request: query/list-businesses/request.vtl
+    response: common/generic-response.vtl
+  - dataSource: UserTable
+    type: Query
+    field: getUserByIdentity
+    request: common/common-get-request.vtl
+    response: common/owner-can-read-response.vtl
+  - dataSource: InviteTable
+    type: Query
+    field: getInvitesByCreator
+    request: common/common-get-request.vtl
+    response: common/owner-can-read-response.vtl
+  - dataSource: InviteTable
+    type: Query
+    field: getInviteByCode
+    request: query/get-invites-by-code/request.vtl
+    response: common/generic-response.vtl
+  - dataSource: InviteTable
+    type: Query
+    field: listAllInvites
+    request: common/common-list-request.vtl
+    response: common/generic-response.vtl
+
+    #### mutations
+  - dataSource: InviteTable
+    type: Mutation
+    field: createInvite
+    request: common/common-create-with-owner.vtl
+    response: common/generic-response.vtl
+  - dataSource: BusinessTable
+    type: Mutation
+    field: createBusiness
+    request: common/common-create.vtl
+    response: common/generic-response.vtl
+  - dataSource: BusinessTable
+    type: Mutation
+    field: updateBusiness
+    request: common/common-update-request.vtl
+    response: common/generic-response.vtl
+  - dataSource: UserTable
+    type: Mutation
+    field: createUser
+    request: common/common-create-with-owner.vtl
+    response: common/generic-response.vtl
+  - dataSource: UserTable
+    type: Mutation
+    field: updateUserSettings
+    request: common/common-update-request-with-owner.vtl
+    response: common/generic-response.vtl
+
+  ### invoke
+  - dataSource: InvokeInviteBusiness
+    type: Mutation
+    field: inviteBusiness
+    request: invoke/inviteBusiness/request.vtl
+    response: common/generic-response.vtl

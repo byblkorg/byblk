@@ -1,0 +1,152 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  listBusinesses(sortKey: String!): [Business] @aws_cognito_user_pools
+  getUserByIdentity(id: ID!): User @aws_cognito_user_pools
+  getInvitesByCreator(creatorId: ID!): [Invite]
+    @aws_cognito_user_pools
+    @aws_auth(cognito_groups: ["Volunteer"])
+  getInviteByCode(inviteCode: String!): Invite @aws_iam
+  listAllInvites(filter: InviteFilterInput): [Invite]
+    @aws_cognito_user_pools
+    @aws_auth(cognito_groups: ["Admin"])
+}
+
+type Mutation {
+  createInvite(input: InviteInput!): Invite @aws_iam
+  createUser(input: UserInput!): User @aws_iam
+  updateUserSettings(input: SettingsInput!): User @aws_cognito_user_pools
+  createBusiness(input: CreateBusinessInput!): Business @aws_iam
+  updateBusiness(input: EditBusinessInput!): Business @aws_iam
+  inviteBusiness(input: CreateBusinessInput!): Boolean
+    @aws_cognito_user_pools
+    @aws_auth(cognito_groups: ["Admin, Volunteer"])
+}
+
+type Invite @aws_cognito_user_pools {
+  id: ID!
+  createdAt: AWSTimestamp!
+  expires: AWSTimestamp!
+  createdBy: ID!
+}
+
+input InviteInput {
+  createdAt: AWSTimestamp!
+  expires: AWSTimestamp!
+  createdBy: ID!
+}
+
+input InviteFilterInput {
+  createdAt: TableStringFilterInput
+  expires: TableStringFilterInput
+  createdBy: TableStringFilterInput
+}
+
+type User @aws_cognito_user_pools {
+  id: ID!
+  settings: UserSettings
+}
+
+input UserInput {
+  settings: SettingsInput
+}
+
+type UserSettings @aws_cognito_user_pools {
+  darkMode: Boolean
+  favorites: [Business]
+}
+
+input SettingsInput {
+  darkMode: Boolean
+  favorites: [String]
+}
+
+type Business @aws_cognito_user_pools {
+  id: ID!
+  name: String!
+  address: String!
+  description: String
+  headerImage: String
+  bodyImages: [String]
+  tags: [String]
+}
+
+input CreateBusinessInput {
+  id: ID!
+  name: String!
+  address: String!
+  description: String
+  headerImage: String
+  bodyImages: [String]
+  tags: [String]
+}
+
+input EditBusinessInput {
+  id: ID!
+  name: String
+  address: String
+  description: String
+  headerImage: String
+  bodyImages: [String]
+  tags: [String]
+}
+
+####### boilerplate #######
+
+input TableBooleanFilterInput {
+  eq: Boolean
+  ne: Boolean
+}
+
+input TableFloatFilterInput {
+  between: [Float]
+  contains: Float
+  eq: Float
+  ge: Float
+  gt: Float
+  le: Float
+  lt: Float
+  ne: Float
+  notContains: Float
+}
+
+input TableIDFilterInput {
+  beginsWith: ID
+  between: [ID]
+  contains: ID
+  eq: ID
+  ge: ID
+  gt: ID
+  le: ID
+  lt: ID
+  ne: ID
+  notContains: ID
+}
+
+input TableIntFilterInput {
+  between: [Int]
+  contains: Int
+  eq: Int
+  ge: Int
+  gt: Int
+  le: Int
+  lt: Int
+  ne: Int
+  notContains: Int
+}
+
+input TableStringFilterInput {
+  beginsWith: String
+  between: [String]
+  contains: String
+  eq: String
+  ge: String
+  gt: String
+  le: String
+  lt: String
+  ne: String
+  notContains: String
+}

@@ -1,0 +1,25 @@
+service: byblk-geoffrey
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stackName: BYBLK-GEOFFREY
+  region: us-east-1 # TODO stand these up in multiple regions and have a load balancer
+  endpointType: regional
+  profile: byblk
+  tags:
+    BYBLK: BYBLK
+  environments:
+    Dev: dev
+    Prod: prod
+    QA: qa
+
+  # plugins:
+  #   - serverless-step-functions
+
+resources:
+  # s3 buckets
+  # - ${file(resources/s3-bucket.yml)}
+
+functions:
+  - ${file(resources/lambdas.yml)}

@@ -1,0 +1,80 @@
+generateInviteCode:
+  handler: louis/lambdas/generateInviteCode/src/index.handler
+  name: GenerateInviteCode
+  description: This lambda generates an invite code and returns it.
+  runtime: nodejs12.x
+  timeout: 30
+  tags:
+    ByBlk: ByBlk
+  package:
+    include:
+      - dist/**
+    artifact: dist/generateInviteCode.zip
+    individually: true
+  events:
+    - http:
+        path: api/generateInviteCode
+        method: post
+        cors: true
+
+sendText:
+  handler: louis/lambdas/sendText/dist/index.handler
+  # handler: lambdas/sendText/dist/index.handler # for running locally
+  name: SendText
+  description: This lambda sends a text message.
+  runtime: nodejs12.x
+  timeout: 30
+  role: arn:aws:iam::750494921159:role/service-role/SendSMSRole
+  tags:
+    ByBlk: ByBlk
+  package:
+    include:
+      - dist/**
+    artifact: dist/sendText.zip
+    individually: true
+  events:
+    - http:
+        path: api/sendText
+        method: post
+        cors: true
+
+createBusiness:
+  handler: louis/lambdas/createBusiness/dist/index.handler
+  # handler: lambdas/createBusiness/dist/index.handler # for running locally
+  name: CreateBusiness
+  description: This lambda creates a business account in cognito and then in dynamodb.
+  runtime: nodejs12.x
+  timeout: 30
+  role: arn:aws:iam::750494921159:role/service-role/SendSMSRole
+  tags:
+    ByBlk: ByBlk
+  package:
+    include:
+      - dist/**
+    artifact: dist/createBusiness.zip
+    individually: true
+  events:
+    - http:
+        path: api/createBusiness
+        method: post
+        cors: true
+# postInviteToDB:
+#   # handler: louis/lambdas/postInviteToDB/dist/index.handler
+#   handler: lambdas/postInviteToDB/dist/index.handler # for running locally
+#   name: PostInviteToDB
+#   description: This lambda generates an invite code and returns it.
+#   runtime: nodejs12.x
+#   timeout: 30
+#   role: arn:aws:iam::750494921159:role/service-role/SendSMSRole
+#   tags:
+#     ByBlk: ByBlk
+#   package:
+#     include:
+#       - dist/**
+#     artifact: dist/postInviteToDB.zip
+#     individually: true
+#   events:
+#     - http:
+#         path: api/postInviteToDB
+#         method: post
+#         cors: true

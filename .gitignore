@@ -9,6 +9,12 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
-
+backend/**/node_modules
+frontend/**/node_modules
+/dist/*
+*.zip
+*.js 
+*.d.ts
+.serverless
 # macOS
 .DS_Store

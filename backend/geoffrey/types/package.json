@@ -1,0 +1,12 @@
+{
+  "name": "@gcmp/types",
+  "version": "0.0.6",
+  "description": "Type definitions",
+  "main": "../dist/types/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "push": "tsc && npm publish --access public"
+  },
+  "author": "Ashton Morris",
+  "license": "MIT"
+}
