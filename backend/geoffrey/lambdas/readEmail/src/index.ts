@@ -1,32 +1,52 @@
 import { Callback, Context, Handler } from "aws-lambda";
 import { S3 } from "aws-sdk";
+import { simpleParser } from "mailparser";
+import {
+  getInvite,
+  isInviteValid,
+  updateBusiness,
+  sendEmailReceipt,
+} from "./functions";
 
 export const handler: Handler = async (
   event: any,
   context: Context,
   cb: Callback
 ) => {
-  const sesNotification = event.Records[0].ses;
-  const s3 = new S3();
-
-  if (sesNotification && process.env.bucketName) {
-    s3.getObject(
-      {
-        Bucket: process.env.bucketName,
-        Key: sesNotification.mail.messageId,
-      },
-      function (err, data) {
-        if (err) {
-          console.log(err, err.stack);
-          cb(err);
-        } else {
-          console.log("Raw email:\n" + data.Body);
-          // Custom email processing goes here
-          cb(null, null);
-        }
-      }
+  try {
+    const srcBucket = event.Records[0].s3.bucket.name;
+    const srcKey = decodeURIComponent(
+      event.Records[0].s3.object.key.replace(/\+/g, " ")
     );
-  } else {
-    throw new Error(`messageId body is missing from ${event}`);
+    const s3 = new S3();
+
+    const data = await s3
+      .getObject({ Bucket: srcBucket, Key: srcKey })
+      .promise();
+
+    if (data.Body) {
+      const email = await simpleParser(data.Body.toString());
+      const subject = email.subject;
+
+      if (subject) {
+        const invite = await getInvite(subject);
+        const shouldWeProceed = await isInviteValid(invite);
+
+        console.log(invite);
+
+        if (shouldWeProceed) {
+          await updateBusiness(invite.businessId, {
+            description: email.text,
+            // headerImage: email.attachments[0].content.toString("base64"),
+          });
+
+          if (email.from?.text) {
+            await sendEmailReceipt(email.from?.text);
+          }
+        } else throw new Error("invite invalid af");
+      } else throw new Error("email cannot be parsed");
+    } else throw new Error("no email found");
+  } catch (e) {
+    throw new Error(e);
   }
 };

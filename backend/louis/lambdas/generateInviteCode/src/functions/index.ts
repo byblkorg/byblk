@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 export function generateInviteCode({
   businessName,
-  countryShortCode,
+  countryShortCode = "US",
   regionName,
 }) {
   return shuffleString(

@@ -4,7 +4,7 @@ InvokeInviteBusiness:
   description: This lambda invokes the invite business step function
   runtime: nodejs12.x
   timeout: 30
-  # role: arn:aws:iam::362759988993:role/LambdaInvokeRole
+  role: arn:aws:iam::750494921159:role/LambdaInvokeRole
   environment:
     region: ${self:custom.region}
   tags:

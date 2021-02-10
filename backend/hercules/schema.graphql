@@ -4,15 +4,21 @@ schema {
 }
 
 type Query {
-  listBusinesses(sortKey: String!): [Business] @aws_cognito_user_pools
   getUserByIdentity(id: ID!): User @aws_cognito_user_pools
-  getInvitesByCreator(creatorId: ID!): [Invite]
+  getInvitesByCreator(creatorId: ID!, nextToken: String): [Invite]
     @aws_cognito_user_pools
     @aws_auth(cognito_groups: ["Volunteer"])
-  getInviteByCode(inviteCode: String!): Invite @aws_iam
-  listAllInvites(filter: InviteFilterInput): [Invite]
+  getInviteByCode(id: String!): Invite @aws_iam
+  listAllInvites(filter: InviteFilterInput, nextToken: String): [Invite]
     @aws_cognito_user_pools
     @aws_auth(cognito_groups: ["Admin"])
+  getBusinessesWithOptions(
+    rcsc: String! #region_country_state_city
+    filter: BusinessFilterInput
+    nextToken: String
+  ): [Business] @aws_cognito_user_pools
+  getBusinessByLocationAndSlug(rcsc: String!, slug: String!): Business
+    @aws_cognito_user_pools
 }
 
 type Mutation {
@@ -21,22 +27,25 @@ type Mutation {
   updateUserSettings(input: SettingsInput!): User @aws_cognito_user_pools
   createBusiness(input: CreateBusinessInput!): Business @aws_iam
   updateBusiness(input: EditBusinessInput!): Business @aws_iam
-  inviteBusiness(input: CreateBusinessInput!): Boolean
+  inviteBusiness(input: InviteBusinessInput!): Boolean
     @aws_cognito_user_pools
     @aws_auth(cognito_groups: ["Admin, Volunteer"])
 }
 
-type Invite @aws_cognito_user_pools {
+type Invite @aws_cognito_user_pools @aws_iam {
   id: ID!
   createdAt: AWSTimestamp!
   expires: AWSTimestamp!
   createdBy: ID!
+  businessId: ID!
 }
 
 input InviteInput {
+  id: ID!
   createdAt: AWSTimestamp!
   expires: AWSTimestamp!
   createdBy: ID!
+  businessId: ID!
 }
 
 input InviteFilterInput {
@@ -51,6 +60,7 @@ type User @aws_cognito_user_pools {
 }
 
 input UserInput {
+  id: ID!
   settings: SettingsInput
 }
 
@@ -64,20 +74,49 @@ input SettingsInput {
   favorites: [String]
 }
 
-type Business @aws_cognito_user_pools {
+type Business @aws_cognito_user_pools @aws_iam {
   id: ID!
   name: String!
   address: String!
+  email: String!
+  slug: String!
+  rcsc: String!
+  description: String
+  headerImage: String
+  bodyImages: [String]
+  tags: [String]
+  industry: String
+}
+
+input BusinessFilterInput {
+  tags: [TableStringFilterInput]
+  industry: TableStringFilterInput
+}
+
+input CreateBusinessInput {
+  name: String!
+  address: String!
+  email: String!
+  slug: String!
+  rcsc: String!
   description: String
   headerImage: String
   bodyImages: [String]
   tags: [String]
 }
 
-input CreateBusinessInput {
-  id: ID!
+input InviteBusinessInput {
   name: String!
   address: String!
+  email: String!
+  regionName: String!
+  countryShortCode: String!
+  createdBy: ID!
+  temporaryPassword: String!
+  phoneNumber: String!
+  country: String!
+  state: String!
+  city: String!
   description: String
   headerImage: String
   bodyImages: [String]

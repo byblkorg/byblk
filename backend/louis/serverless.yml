@@ -10,7 +10,19 @@ provider:
   tags:
     BYBLK: BYBLK
 
+layers:
+  awsAppsyncLayer:
+    path: layers/awsAppsyncLayer/dist/
+    name: AwsAppsyncLayer-${self:custom.env}
+    retain: true
+    description: Node module layer for aws-appsync since its 10mb
+    compatibleRuntimes:
+      - nodejs12.x
+
 custom:
+  stage: ${opt:stage, self:provider.stage}
+  env: ${self:custom.stage}
+  region: ${opt:region}
   environments:
     Dev: dev
     Prod: prod
@@ -38,19 +50,19 @@ stepFunctions:
         States:
           GenerateInviteCode:
             Type: Task
-            Resource: arn:aws:lambda:us-east-1:750494921159:function:CreateBusiness
-            InputPath: $.invitee
+            Resource: arn:aws:lambda:${self:custom.region}:750494921159:function:GenerateInviteCode-${self:custom.env}
+            InputPath: $
             ResultPath: $.invitee
             Next: CreateBusiness
           CreateBusiness:
             Type: Task
-            Resource: arn:aws:lambda:us-east-1:750494921159:function:CreateBusiness
-            InputPath: $.invitee
+            Resource: arn:aws:lambda:${self:custom.region}:750494921159:function:CreateBusiness-${self:custom.env}
+            InputPath: $
             ResultPath: $.invitee
             Next: SendText
           SendText:
             Type: Task
-            Resource: arn:aws:lambda:us-east-1:750494921159:function:SendText
-            InputPath: $.invitee
+            Resource: arn:aws:lambda:${self:custom.region}:750494921159:function:SendText-${self:custom.env}
+            InputPath: $
             ResultPath: $.invitee
             End: true

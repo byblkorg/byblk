@@ -9,6 +9,11 @@ provider:
   profile: byblk
   tags:
     BYBLK: BYBLK
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  env: ${self:custom.stage}
+  region: ${opt:region}
   environments:
     Dev: dev
     Prod: prod

@@ -27,14 +27,21 @@ mappingTemplates:
   #### queries
   - dataSource: BusinessTable
     type: Query
-    field: listBusinesses
-    request: query/list-businesses/request.vtl
+    field: getBusinessesWithOptions
+    request: query/get-businesses-with-options/request.vtl
     response: common/generic-response.vtl
+  - dataSource: BusinessTable
+    type: Query
+    field: getBusinessByLocationAndSlug
+    request: query/get-business-by-location-slug/request.vtl
+    response: common/generic-response.vtl
+
   - dataSource: UserTable
     type: Query
     field: getUserByIdentity
     request: common/common-get-request.vtl
     response: common/owner-can-read-response.vtl
+
   - dataSource: InviteTable
     type: Query
     field: getInvitesByCreator
@@ -43,7 +50,7 @@ mappingTemplates:
   - dataSource: InviteTable
     type: Query
     field: getInviteByCode
-    request: query/get-invites-by-code/request.vtl
+    request: common/common-get-request.vtl
     response: common/generic-response.vtl
   - dataSource: InviteTable
     type: Query

@@ -1,4 +1,5 @@
 import { AWSAppSyncClient } from "aws-appsync";
+require("isomorphic-fetch");
 
 export enum DocumentType {
   query = "query",
@@ -16,7 +17,7 @@ export async function query({
   variables?: { [key: string]: any };
   documentType: DocumentType;
   document: string;
-}): Promise<void> {
+}): Promise<{ [key: string]: { [key: string]: any } }> {
   try {
     await client.hydrated();
 
