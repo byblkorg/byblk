@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import Animated from "react-native-reanimated";
 
-const { Extrapolate, interpolate } = Animated;
+const { Extrapolate, interpolateNode } = Animated;
 const { height: wHeight, width: wWidth } = Dimensions.get("window");
 
 export const backgroundImage = require("./assets/background.jpeg");
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 interface HeaderImageProps {
-  y: Animated.Value<number>;
+  y: number;
   imageSrc:
     | number
     | ImageURISource
@@ -33,12 +33,12 @@ interface HeaderImageProps {
 }
 
 export default ({ y, imageSrc }: HeaderImageProps) => {
-  const height = interpolate(y, {
+  const height = interpolateNode(y, {
     inputRange: [-100, 0],
     outputRange: [HEADER_IMAGE_HEIGHT + 100, HEADER_IMAGE_HEIGHT],
     extrapolateRight: Extrapolate.CLAMP,
   });
-  const top = interpolate(y, {
+  const top = interpolateNode(y, {
     inputRange: [0, 100],
     outputRange: [0, -100],
     extrapolateLeft: Extrapolate.CLAMP,

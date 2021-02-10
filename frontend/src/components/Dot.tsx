@@ -1,6 +1,9 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import Animated, { interpolate, Extrapolate } from "react-native-reanimated";
+import Animated, {
+  interpolateNode,
+  Extrapolate,
+} from "react-native-reanimated";
 
 type DotProps = {
   index: number;
@@ -8,13 +11,13 @@ type DotProps = {
 };
 
 export default function Dot({ index, currentIndex }: DotProps) {
-  const opacity = interpolate(currentIndex, {
+  const opacity = interpolateNode(currentIndex, {
     inputRange: [index - 1, index, index + 1],
     outputRange: [0.5, 1, 0.5],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const scale = interpolate(currentIndex, {
+  const scale = interpolateNode(currentIndex, {
     inputRange: [index - 1, index, index + 1],
     outputRange: [1, 1.25, 1],
     extrapolate: Extrapolate.CLAMP,

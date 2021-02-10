@@ -1,5 +1,5 @@
 import React, { RefObject, useContext } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import Animated from "react-native-reanimated";
 import { useValue, withTimingTransition } from "react-native-redash";
 import { Feather as Icon } from "@expo/vector-icons";
@@ -8,7 +8,6 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
-import TabHeader from "./TabHeader";
 import { TabModel } from "./Content";
 import appcontext from "appcontext";
 import createTheme, { fonts } from "theme";
@@ -16,7 +15,14 @@ import createTheme, { fonts } from "theme";
 const ICON_SIZE = 24;
 const PADDING = 16;
 export const MIN_HEADER_HEIGHT = 45;
-const { interpolate, Extrapolate, useCode, greaterThan, set, block } = Animated;
+const {
+  interpolateNode,
+  Extrapolate,
+  useCode,
+  greaterThan,
+  set,
+  block,
+} = Animated;
 
 const styles = StyleSheet.create({
   container: {
@@ -39,7 +45,7 @@ const styles = StyleSheet.create({
 });
 
 interface HeaderProps {
-  y: Animated.Value<number>;
+  y: number;
   tabs: TabModel[];
   scrollView: RefObject<Animated.ScrollView>;
   title: string;
@@ -51,12 +57,12 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
   const insets = useSafeArea();
   const transition = withTimingTransition(toggle, { duration: 100 });
   const { top: paddingTop } = insets;
-  const translateX = interpolate(y, {
+  const translateX = interpolateNode(y, {
     inputRange: [0, HEADER_IMAGE_HEIGHT],
     outputRange: [-ICON_SIZE - PADDING, 0],
     extrapolate: Extrapolate.CLAMP,
   });
-  const translateY = interpolate(y, {
+  const translateY = interpolateNode(y, {
     inputRange: [-100, 0, HEADER_IMAGE_HEIGHT],
     outputRange: [
       HEADER_IMAGE_HEIGHT - MIN_HEADER_HEIGHT + 100,
@@ -92,7 +98,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
       />
 
       <View style={styles.header}>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
+        <TouchableOpacity onPress={() => goBack()}>
           <View>
             <Icon name="arrow-left" size={ICON_SIZE} color="white" />
 
@@ -106,7 +112,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
               />
             </Animated.View>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
         <Animated.Text
           style={[
             styles.title,

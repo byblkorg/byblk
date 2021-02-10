@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { colors } from "theme";
 
@@ -15,14 +15,14 @@ export default function Button({ variant, label, onPress }: ButtonProps) {
   const color = variant === "primary" ? "white" : "#0C0D34";
 
   return (
-    <RectButton
+    <TouchableOpacity
       style={[styles.container, { backgroundColor }]}
       {...{ onPress }}
     >
       <View>
         <Text style={[styles.label, { color }]}>{label}</Text>
       </View>
-    </RectButton>
+    </TouchableOpacity>
   );
 }
 
