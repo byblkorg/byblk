@@ -2,8 +2,28 @@ import { query } from "@gcmp/geoffrey";
 import { AWSAppSyncClient, AUTH_TYPE } from "aws-appsync";
 import { DocumentType, Invitee } from "@gcmp/types";
 import gql from "graphql-tag";
+require("isomorphic-fetch");
 
-export default function createBusiness(invitee: Invitee, id: string) {
+function removeSpecialChars(str: string) {
+  return str
+    .replace(/[`~!@#$%^&*()|+\-=?;:'",<>]/, "")
+    .split(".")
+    .join("");
+}
+
+function parseString(str: string) {
+  return removeSpecialChars(str).toLowerCase();
+}
+
+function slugifyString(str: string) {
+  return str.toLowerCase().replace(/ /g, "_");
+}
+
+export default function createBusiness(invitee: Invitee) {
+  if (!invitee?.country || !invitee?.state || !invitee?.city) {
+    throw new Error("Missing business details. Cannot create business");
+  }
+
   const client = new AWSAppSyncClient({
     disableOffline: true,
     url:
@@ -22,27 +42,29 @@ export default function createBusiness(invitee: Invitee, id: string) {
     mutation createBusiness($input: CreateBusinessInput!) {
       createBusiness(input: $input) {
         id
-        createdAt
-        expires
-        createdBy
       }
     }
   `;
+
+  const rcsc = `${parseString(invitee.regionName)}_${parseString(
+    invitee.country
+  )}_${parseString(invitee.state)}_${parseString(invitee.city)}`;
 
   return query({
     client,
     documentType: DocumentType.mutation,
     document: CreateBusiness,
     variables: {
-      createdAt: ~~(+new Date() / 1000),
-      expires: ~~(+new Date() / 1000) + 604800,
-      name: invitee.businessName,
-      createdBy: invitee.createdBy,
-      id: invitee.eventCode,
-      address: invitee.address,
-      description: invitee.description,
-      headerImage: invitee.headerImage,
-      tags: invitee.tags,
+      input: {
+        name: invitee.name,
+        address: invitee.address,
+        email: invitee.email,
+        slug: slugifyString(invitee.name),
+        rcsc,
+        description: invitee.description,
+        headerImage: invitee.headerImage,
+        tags: invitee.tags,
+      },
     },
   });
 }

@@ -6,12 +6,9 @@ export const handler: Handler = async (
   context: Context,
   cb: Callback
 ) => {
-  const messageBody: {
-    inviteCode: string;
-    phoneNumber: string;
-  } = event.messageBody;
+  const invitee = event.invitee;
 
-  if (messageBody) {
+  if (invitee) {
     const attributes = {
       attributes: {
         DefaultSMSType: "Transactional",
@@ -19,8 +16,8 @@ export const handler: Handler = async (
     };
 
     const params = {
-      Message: `Thanks for joining ByBlk! To start the sign up process as a business owner, please text ${messageBody.inviteCode} to our virtual assistant, Marvin, at +1 (111) - 999 888.`,
-      PhoneNumber: messageBody.phoneNumber,
+      Message: `Thanks for joining ByBlk! To start the sign up process as a business owner, please text ${invitee.eventCode} to our virtual assistant, Marvin, at +1 (111) - 999 888.`,
+      PhoneNumber: invitee.phoneNumber,
     };
 
     const sns = new SNS({ apiVersion: "2010-03-31" });
@@ -29,6 +26,6 @@ export const handler: Handler = async (
 
     return await sns.publish(params).promise();
   } else {
-    throw new Error(`Message body is missing from ${event}`);
+    throw new Error(`Invitee information is missing from ${event}`);
   }
 };

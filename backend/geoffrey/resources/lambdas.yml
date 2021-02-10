@@ -1,9 +1,14 @@
 readEmail:
-  handler: geoffrey/lambdas/readEmail/src/index.handler
+  handler: index.handler
   name: ReadEmail
   description: This lambda reads emails and returns its contents as JSON.
   runtime: nodejs12.x
   timeout: 30
+  environment:
+    bucketName: marvin-emails
+  layers:
+    - arn:aws:lambda:${self:custom.region}:750494921159:layer:AwsAppsyncLayer-${self:custom.env}:1
+  role: arn:aws:iam::750494921159:role/geoffrey-dev
   tags:
     ByBlk: Geoffrey
   package:
@@ -12,7 +17,7 @@ readEmail:
     artifact: dist/readEmail.zip
     individually: true
   events:
-    - http:
-        path: api/readEmail
-        method: post
-        cors: true
+    - s3:
+        bucket: marvin-emails
+        event: s3:ObjectCreated:*
+        existing: true

@@ -2,14 +2,15 @@
     "version" : "2017-02-28",
     "operation" : "Query",
     "query" : {
-        "expression" : "#companyId = :companyId",
+        "expression" : "#rcsc = :rcsc",
         "expressionNames" : {
-            "#companyId": "companyId",
+            "#rcsc": "rcsc",
         },
         "expressionValues" : {
-            ":companyId": { "S" : "$context.args.companyId" },
+            ":rcsc": { "S" : "$context.args.rcsc" },
         }
     },
+    "index" : "rcsc-index",
     "nextToken" : $util.toJson($util.defaultIfNullOrEmpty($ctx.args.nextToken, null)),
     "scanIndexForward" : false,
     "consistentRead" : false,
