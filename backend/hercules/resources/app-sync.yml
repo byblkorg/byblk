@@ -35,6 +35,16 @@ mappingTemplates:
     field: getBusinessByLocationAndSlug
     request: query/get-business-by-location-slug/request.vtl
     response: common/generic-response.vtl
+  - dataSource: BusinessTable
+    type: Query
+    field: getFeaturedBusinesses
+    request: common/common-list-request.vtl
+    response: common/generic-response.vtl
+  - dataSource: BusinessTable
+    type: Query
+    field: getBusinessBySlug
+    request: query/get-business-by-slug/request.vtl
+    response: common/generic-response.vtl
 
   - dataSource: UserTable
     type: Query

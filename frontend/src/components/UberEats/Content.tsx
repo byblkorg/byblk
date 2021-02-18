@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { useContext } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -9,9 +8,9 @@ import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
 import { MIN_HEADER_HEIGHT } from "./Header";
 import appcontext from "appcontext";
 import createTheme, { colors } from "theme";
+import { Business as BusinessType } from "@gcmp/types";
 
 const { height } = Dimensions.get("window");
-
 export const defaultTabs = [];
 const styles = StyleSheet.create({
   section: {
@@ -40,18 +39,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export interface TabModel {
-  name: string;
-  anchor: number;
-}
-
 interface ContentProps {
   y: number;
   renderContent: () => JSX.Element;
-  onMeasurement?: (index: number, tab: TabModel) => void;
+  business?: BusinessType;
 }
 
-export default ({ y, renderContent, onMeasurement }: ContentProps) => {
+export default ({ y, renderContent, business }: ContentProps) => {
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
 
@@ -81,16 +75,16 @@ export default ({ y, renderContent, onMeasurement }: ContentProps) => {
       >
         <View style={styles.info}>
           <Text style={[styles.text, { color: theme.colors.defaultFontColor }]}>
-            1530 Franklin Street Hillside, NJ 07205
+            {business && `${business?.city}, ${business?.state}`}
           </Text>
         </View>
 
         <View style={styles.info}>
-          <Text style={styles.link}>(999) 888-5555</Text>
+          <Text style={styles.link}>{business?.phone}</Text>
         </View>
 
         <View style={styles.info}>
-          <Text style={styles.link}>www.internet.com</Text>
+          <Text style={styles.link}>{business?.website}</Text>
         </View>
       </Animated.View>
 

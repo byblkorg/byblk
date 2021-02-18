@@ -17,7 +17,7 @@ export const handler: Handler = async (
 
     const params = {
       Message: `Thanks for joining ByBlk! To start the sign up process as a business owner, please text ${invitee.eventCode} to our virtual assistant, Marvin, at +1 (111) - 999 888.`,
-      PhoneNumber: invitee.phoneNumber,
+      PhoneNumber: invitee.phone,
     };
 
     const sns = new SNS({ apiVersion: "2010-03-31" });

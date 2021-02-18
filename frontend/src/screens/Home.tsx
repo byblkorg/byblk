@@ -14,56 +14,8 @@ import createTheme, { colors } from "theme";
 import appcontext from "appcontext";
 import LottieView from "lottie-react-native";
 import { ScreenProps } from "types";
-
-const data = [
-  {
-    name: "restaurant",
-    categories: [
-      {
-        name: "West Indian",
-        subcategories: ["Jamaica", "Cuba", "Aruba", "Saint Lucia", "Grenada"],
-      },
-      {
-        name: "American",
-        subcategories: ["Southern", "Soul Food"],
-      },
-    ],
-  },
-  {
-    name: "grocery",
-    categories: [],
-  },
-  {
-    name: "bakery",
-    categories: [],
-  },
-  {
-    name: "home",
-    categories: [
-      {
-        name: "Filters",
-        subcategories: [
-          "Contractors",
-          "Electricians",
-          "Landscapers",
-          "Cleaners",
-          "Locksmiths",
-          "Movers",
-          "Painters",
-          "Plumbers",
-        ],
-      },
-    ],
-  },
-  {
-    name: "cosmetic",
-    categories: [],
-  },
-  {
-    name: "wellness",
-    categories: [],
-  },
-];
+import { fetchLocalBusinesses, fetchFeaturedBusinesses } from "graphql/queries";
+import { getLocation } from "services";
 
 const refreshHeight = 100;
 
@@ -107,7 +59,7 @@ const HeartsAnimation = ({
 
 export default function Discover({
   navigation: { navigate },
-}: ScreenProps<"Home">) {
+}: ScreenProps<"home">) {
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
   const [query, updateQuery] = useState("");
@@ -116,6 +68,8 @@ export default function Discover({
   const [progress, setProgress] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [extraPaddingTop] = useState(new Animated.Value(0));
+  const [localBusinesses, setLocalBusinesses] = useState<any[]>([]);
+  const [featuredBusinesses, setFeaturedBusinesses] = useState<any[]>([]);
 
   useEffect(() => {
     if (offsetY <= 0) {
@@ -132,6 +86,18 @@ export default function Discover({
       }).start();
     }
   }, [refreshing]);
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  async function init() {
+    const location = await getLocation();
+    const businesses = await fetchLocalBusinesses("americas", location);
+    setLocalBusinesses(businesses.data.getBusinessesWithOptions.items);
+    const featured = await fetchFeaturedBusinesses();
+    setFeaturedBusinesses(featured.data.getFeaturedBusinesses.items);
+  }
 
   function onScroll(event) {
     const {
@@ -200,8 +166,8 @@ export default function Discover({
 
           <FilterBar
             onSelectFilter={(filter) =>
-              navigate("Results", {
-                data,
+              navigate("results", {
+                filter,
               })
             }
           />
@@ -210,13 +176,7 @@ export default function Discover({
         <View style={styles.listingSection}>
           <View style={styles.sectionHeader}>
             <Text style={[theme.typography.subtitle]}>NEARBY</Text>
-            <TouchableOpacity
-              onPress={() =>
-                navigate("Results", {
-                  data,
-                })
-              }
-            >
+            <TouchableOpacity onPress={() => navigate("results")}>
               <Text
                 style={[
                   theme.typography.subtitle,
@@ -234,8 +194,23 @@ export default function Discover({
             style={styles.sectionScrollView}
             showsHorizontalScrollIndicator={false}
           >
-            {data.map((data, index) => (
-              <Card onPress={() => navigate("Business")} key={index} />
+            {localBusinesses.map((data, index) => (
+              <Card
+                onPress={() =>
+                  navigate("business", {
+                    region: data.region,
+                    csc: data.csc,
+                    slug: data.slug,
+                    data,
+                  })
+                }
+                key={index}
+                {...{
+                  title: data.name,
+                  subtitle: data.address,
+                  imageSrc: data.headerImage,
+                }}
+              />
             ))}
           </ScrollView>
         </View>
@@ -244,13 +219,7 @@ export default function Discover({
           <View style={styles.sectionHeader}>
             <Text style={[theme.typography.subtitle]}>FEATURED</Text>
 
-            <TouchableOpacity
-              onPress={() =>
-                navigate("Results", {
-                  data,
-                })
-              }
-            >
+            <TouchableOpacity onPress={() => navigate("results")}>
               <Text
                 style={[
                   theme.typography.subtitle,
@@ -268,8 +237,23 @@ export default function Discover({
             style={styles.sectionScrollView}
             showsHorizontalScrollIndicator={false}
           >
-            {data.map((data, index) => (
-              <Card onPress={() => navigate("Business")} key={index} />
+            {featuredBusinesses.map((data, index) => (
+              <Card
+                onPress={() =>
+                  navigate("business", {
+                    region: data.region,
+                    csc: data.csc,
+                    slug: data.slug,
+                    data,
+                  })
+                }
+                key={index}
+                {...{
+                  title: data.name,
+                  subtitle: data.address,
+                  imageSrc: data.headerImage,
+                }}
+              />
             ))}
           </ScrollView>
         </View>

@@ -6,11 +6,17 @@ import createTheme, { colors } from "theme";
 type CardProps = {
   onPress?: () => void;
   style?: "small" | "default";
+  title: string;
+  subtitle: string;
+  imageSrc: string;
 };
 
 export default function Card({
   onPress = () => {},
   style = "default",
+  title,
+  subtitle,
+  imageSrc,
 }: CardProps) {
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
@@ -22,16 +28,19 @@ export default function Card({
       {...{ onPress }}
     >
       <View style={[styles.imageContainer, { backgroundColor }]}>
-        <Image
-          source={{ uri: "https://picsum.photos/200/300" }}
-          style={styles.image}
-        />
+        {imageSrc ? (
+          <Image source={{ uri: imageSrc }} style={styles.image} />
+        ) : (
+          <View
+            style={[styles.image, { backgroundColor: colors.slate }]}
+          ></View>
+        )}
       </View>
       <View
         style={[
           styles.details,
           {
-            backgroundColor,
+            backgroundColor: imageSrc,
           },
         ]}
       >
@@ -46,14 +55,14 @@ export default function Card({
             },
           ]}
         >
-          La Brioche
+          {title}
         </Text>
         <Text
           style={{
             color: theme.colors.defaultFontColor,
           }}
         >
-          Linden, Bakery
+          {subtitle}
         </Text>
       </View>
     </TouchableOpacity>

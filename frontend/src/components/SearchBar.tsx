@@ -10,21 +10,27 @@ import {
 import createTheme from "theme";
 import appcontext from "appcontext";
 import { Octicons } from "@expo/vector-icons";
+import { fetchBusinessWithSlug } from "graphql/queries";
+import { useNavigation } from "@react-navigation/native";
+
+function slugifyString(str: string) {
+  return str.toLowerCase().replace(/ /g, "_");
+}
 
 interface SearchBarProps {
   style?: ViewStyle;
-  onIconPress?: () => void;
+  onIconPress?: (text: string) => void;
   onType?: (text: string) => void;
 }
 
 export default function SearchBar({
   style,
-  onIconPress = () => {},
   onType = () => {},
 }: SearchBarProps) {
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
   const [text, updateText] = useState("");
+  const navigation = useNavigation();
 
   useEffect(() => {
     onType && onType(text);
@@ -44,14 +50,27 @@ export default function SearchBar({
     >
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Search"
+          placeholder="Search by name"
           placeholderTextColor={ctx?.darkmode ? "#ccc" : "#eee"}
           style={[theme.fonts.cotham, styles.input, { color: "white" }]}
           onChangeText={(text) => updateText(text)}
           value={text}
         />
 
-        <TouchableOpacity onPress={onIconPress && onIconPress}>
+        <TouchableOpacity
+          onPress={async () => {
+            const searchRes = await fetchBusinessWithSlug(slugifyString(text));
+            const business = searchRes.data.getBusinessBySlug.items[0];
+            if (business) {
+              navigation.navigate("business", {
+                region: business.region,
+                csc: business.csc,
+                slug: business.slug,
+                data: business,
+              });
+            }
+          }}
+        >
           <Octicons name="search" size={20} color="white" />
         </TouchableOpacity>
       </View>

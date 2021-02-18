@@ -10,13 +10,13 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
-import { onScrollEvent, useValue } from "react-native-redash";
 
 import HeaderImage from "./HeaderImage";
-import ContentContainer, { defaultTabs } from "./Content";
+import ContentContainer from "./Content";
 import Header from "./Header";
 import appcontext from "appcontext";
 import createTheme from "theme";
+import { Business } from "@gcmp/types";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +28,7 @@ export default ({
   title,
   imageSrc,
   renderContent,
+  business,
 }: {
   title: string;
   imageSrc:
@@ -36,11 +37,9 @@ export default ({
     | ImageURISource[]
     | Animated.Node<ImageSourcePropType>;
   renderContent: () => JSX.Element;
+  business?: Business;
 }) => {
   const scrollView = useRef<Animated.ScrollView>(null);
-  const [tabs, setTabs] = useState(defaultTabs);
-  // const y = useValue(0);
-  // const onScroll = onScrollEvent({ y });
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
 
@@ -77,15 +76,12 @@ export default ({
         {...{ onScroll }}
       >
         <ContentContainer
-          // onMeasurement={(index, tab) => {
-          //   tabs[index] = tab;
-          //   setTabs([...tabs]);
-          // }}
           {...{ y: y.value }}
           renderContent={renderContent}
+          business={business}
         />
       </Animated.ScrollView>
-      <Header {...{ y: y.value, tabs, scrollView, title }} />
+      <Header {...{ y: y.value, title }} />
     </View>
   );
 };

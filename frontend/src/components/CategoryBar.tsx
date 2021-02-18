@@ -1,9 +1,18 @@
-import React, { useContext } from "react";
+import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import Category from "./Category";
 import SectionHeader from "./SectionHeader";
+import { regions } from "services";
 
-export default function CategoryBar({ data = [] }: { data: any[] }) {
+export default function CategoryBar({
+  data = [],
+  onPress = () => {},
+  controlledActiveCountryCode,
+}: {
+  data: typeof regions;
+  onPress: (country: string) => void;
+  controlledActiveCountryCode: string;
+}) {
   return (
     <View style={{ height: (data.length + 1) * 100 }}>
       {data.map((category) => (
@@ -15,12 +24,13 @@ export default function CategoryBar({ data = [] }: { data: any[] }) {
             showsHorizontalScrollIndicator={false}
             style={styles.subcategoriesContainer}
           >
-            {category.subcategories.map((subcategory, index) => (
+            {category.countries.map((country, index) => (
               <Category
                 {...{
                   key: index,
-                  title: subcategory,
-                  onPress: () => {},
+                  title: country.name,
+                  onPress: () => onPress(country.code),
+                  active: country.code === controlledActiveCountryCode,
                 }}
               />
             ))}
