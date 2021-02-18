@@ -1,16 +1,14 @@
-import React, { RefObject, useContext } from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import Animated from "react-native-reanimated";
 import { useValue, withTimingTransition } from "react-native-redash";
 import { Feather as Icon } from "@expo/vector-icons";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-
 import { HEADER_IMAGE_HEIGHT } from "./HeaderImage";
-import { TabModel } from "./Content";
 import appcontext from "appcontext";
-import createTheme, { fonts } from "theme";
+import createTheme from "theme";
+import { updateSettings } from "graphql/mutations";
 
 const ICON_SIZE = 24;
 const PADDING = 16;
@@ -46,13 +44,11 @@ const styles = StyleSheet.create({
 
 interface HeaderProps {
   y: number;
-  tabs: TabModel[];
-  scrollView: RefObject<Animated.ScrollView>;
   title: string;
 }
 
-export default ({ y, tabs, scrollView, title }: HeaderProps) => {
-  const { goBack } = useNavigation();
+export default ({ y, title }: HeaderProps) => {
+  const { navigate } = useNavigation();
   const toggle = useValue<0 | 1>(0);
   const insets = useSafeArea();
   const transition = withTimingTransition(toggle, { duration: 100 });
@@ -78,6 +74,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
     toggle,
     y,
   ]);
+
   return (
     <Animated.View
       style={[
@@ -98,7 +95,7 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
       />
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => goBack()}>
+        <TouchableOpacity onPress={() => navigate("home")}>
           <View>
             <Icon name="arrow-left" size={ICON_SIZE} color="white" />
 
@@ -113,21 +110,25 @@ export default ({ y, tabs, scrollView, title }: HeaderProps) => {
             </Animated.View>
           </View>
         </TouchableOpacity>
+
         <Animated.Text
           style={[
             styles.title,
-            // @ts-ignore
-
             { transform: [{ translateX }, { translateY }] },
             { color: theme.colors.defaultFontColor },
           ]}
         >
           {title}
         </Animated.Text>
-        <Icon name="heart" size={ICON_SIZE} color="white" />
-      </View>
 
-      {/* <TabHeader {...{ y, transition, tabs, scrollView }} /> */}
+        {/* <TouchableOpacity
+          onPress={() => {
+            updateSettings({});
+          }}
+        >
+          <Icon name="heart" size={ICON_SIZE} color="white" />
+        </TouchableOpacity> */}
+      </View>
     </Animated.View>
   );
 };

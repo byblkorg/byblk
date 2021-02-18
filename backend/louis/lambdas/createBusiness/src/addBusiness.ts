@@ -46,9 +46,9 @@ export default function createBusiness(invitee: Invitee) {
     }
   `;
 
-  const rcsc = `${parseString(invitee.regionName)}_${parseString(
-    invitee.country
-  )}_${parseString(invitee.state)}_${parseString(invitee.city)}`;
+  const csc = `${parseString(invitee.country)}_${parseString(
+    invitee.state
+  )}_${parseString(invitee.city)}`;
 
   return query({
     client,
@@ -60,10 +60,15 @@ export default function createBusiness(invitee: Invitee) {
         address: invitee.address,
         email: invitee.email,
         slug: slugifyString(invitee.name),
-        rcsc,
+        csc,
         description: invitee.description,
         headerImage: invitee.headerImage,
         tags: invitee.tags,
+        region: invitee.regionName,
+        city: invitee.city,
+        state: invitee.state,
+        phone: invitee.phone,
+        website: invitee.website,
       },
     },
   });

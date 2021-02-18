@@ -1,33 +1,45 @@
-import React, { useContext } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-} from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { View, StyleSheet, Dimensions, Text } from "react-native";
 import appcontext from "appcontext";
 import createTheme from "theme";
-import { Tag, Overlay } from "components";
+import { Tag } from "components";
 import { useNavigation } from "@react-navigation/native";
 import UberEats from "../components/UberEats";
+import { ScreenProps } from "types";
+import { getBusiness } from "graphql/queries";
+import { Business } from "@gcmp/types";
+
+interface BusinessProps extends ScreenProps<"business"> {}
 
 const { width, height } = Dimensions.get("window");
 
-export default function Business() {
+export default function BusinessScreen({ route }: BusinessProps) {
+  const [business, setBusiness] = useState<Business | null>(null);
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
   const navigation = useNavigation();
+  const data = route.params?.data;
+  const csc = route.params.csc;
+  const slug = route.params.slug;
+
+  useEffect(() => {
+    if (typeof data === "object") {
+      setBusiness(data);
+    } else {
+      init();
+    }
+  }, []);
+
+  async function init() {
+    const businessRes = await getBusiness(csc, slug);
+    setBusiness(businessRes.data.getBusinessByLocationAndSlug);
+  }
 
   return (
     <UberEats
-      title="Really Super Cool Business"
-      imageSrc={{ uri: "https://picsum.photos/500/500" }}
+      title={business?.name}
+      imageSrc={{ uri: business?.headerImage }}
+      business={business}
       renderContent={() => (
         <View
           style={[
@@ -53,10 +65,7 @@ export default function Business() {
                 !ctx?.darkmode && { color: theme.colors.dianne },
               ]}
             >
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Voluptatum doloribus quae quis. Laboriosam magni similique
-              quisquam. Rerum dolorum vero facere accusamus eum nemo eaque
-              blanditiis beatae facilis deserunt, repellendus repudiandae.
+              {business?.description}
             </Text>
           </View>
 
@@ -66,11 +75,9 @@ export default function Business() {
               { padding: theme.spacing.padding.sm },
             ]}
           >
-            <Tag>Bakery</Tag>
-            <Tag>Vegan</Tag>
-            <Tag>Cruelty Free</Tag>
-            <Tag>Organic</Tag>
-            <Tag>Woman Owned</Tag>
+            {business?.tags?.map((tag) => (
+              <Tag>{tag}</Tag>
+            ))}
           </View>
 
           <View

@@ -10,6 +10,7 @@ import Animated, {
   useAnimatedScrollHandler,
   runOnJS,
 } from "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -20,31 +21,40 @@ type WelcomeSpinnerProps = {
   navigation: ProfileScreenNavigationProp;
 };
 
+const storeData = async (value) => {
+  try {
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.setItem("hasReadIntro", jsonValue);
+  } catch (e) {
+    // saving error
+  }
+};
+
 const { width } = Dimensions.get("window");
 
 const slides = [
   {
-    subtitle: "So relaxed",
+    subtitle: "Welcome!",
     description:
-      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+      "ByBlk is a grass-roots initiative that seeks to, from a global perspective, introduce the Black world to itself through culture, education, and commerce.",
     color: "#0f1924",
   },
   {
-    subtitle: "So playful",
+    subtitle: "Community ownership",
     description:
-      "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
+      "We're a non-profit. That means we all own this app and any and all future profits generated from it will be reinvested into the community.",
     color: "#ce8277",
   },
   {
-    subtitle: "So Eccentric",
+    subtitle: "Open Source",
     description:
-      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Community ownership taken to the next level. Our front-end is completely open source. If you can code, you can fork the app and make your own spin on it. Or, simply, watch and learn as the application grows.",
     color: "#526073",
   },
   {
-    subtitle: "So Funky",
+    subtitle: "Thank You",
     description:
-      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+      "Thank you again for joining. I hope you enjoy the journey with us!",
     color: "#caaba6",
   },
 ];
@@ -122,8 +132,9 @@ export default function WelcomeSpinner({ navigation }: WelcomeSpinnerProps) {
                 <SubSlide
                   {...{ subtitle, description, last }}
                   key={index}
-                  onPress={() => {
+                  onPress={async () => {
                     if (last) {
+                      await storeData(true);
                       navigation.replace("Home");
                     } else {
                       if (scroll.current) {

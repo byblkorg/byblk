@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { TextInput, Button } from "components";
 import appcontext from "appcontext";
@@ -6,6 +6,11 @@ import { colors } from "theme";
 import { AuthState } from "../types";
 import AuthContext from "../authcontext";
 import { useNavigation } from "@react-navigation/native";
+import {
+  handleLogin,
+  americanizePhoneNumber,
+  normalizePhoneStringInput,
+} from "../functions";
 
 const styles = StyleSheet.create({
   text: {
@@ -18,9 +23,35 @@ const styles = StyleSheet.create({
 });
 
 export default function Login() {
-  const { theme } = useContext(appcontext);
+  const { theme, isAuthenticated } = useContext(appcontext);
   const { setAuthState } = useContext(AuthContext);
   const navigation = useNavigation();
+  const [state, setState] = useState({
+    phone: "",
+    password: "",
+  });
+
+  function updateState(key: string, value: string) {
+    setState((currState) => ({ ...currState, [key]: value }));
+  }
+
+  function isValid({
+    phone,
+    password,
+  }: {
+    phone?: string;
+    password?: string;
+  }): boolean {
+    if (phone) {
+      return phone.length > 0;
+    }
+
+    if (password) {
+      return password.length > 0;
+    }
+
+    return false;
+  }
 
   return (
     <>
@@ -41,9 +72,14 @@ export default function Login() {
 
       <View style={styles.marginBottomContainer}>
         <TextInput
-          icon="mail"
-          placeholder="Enter your email"
-          validator={() => false}
+          icon="phone"
+          placeholder="Enter your phone number"
+          validator={() =>
+            isValid({
+              phone: state.phone,
+            })
+          }
+          onChangeText={(txt) => updateState("phone", txt)}
         />
       </View>
 
@@ -51,7 +87,12 @@ export default function Login() {
         <TextInput
           icon="lock"
           placeholder="Enter your password"
-          validator={() => true}
+          validator={() =>
+            isValid({
+              password: state.password,
+            })
+          }
+          onChangeText={(txt) => updateState("password", txt)}
           secureTextEntry
         />
       </View>
@@ -59,7 +100,19 @@ export default function Login() {
       <View style={styles.marginBottomContainer}>
         <Button
           label="Login"
-          onPress={() => navigation.navigate("Welcome")}
+          onPress={() => {
+            handleLogin({
+              username: americanizePhoneNumber(
+                normalizePhoneStringInput(state.phone)
+              ),
+              password: state.password,
+              onSuccess: (res) => {
+                isAuthenticated(true);
+                navigation.navigate("Welcome");
+              },
+              onFail: () => {},
+            });
+          }}
           variant="primary"
         />
       </View>

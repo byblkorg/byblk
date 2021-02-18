@@ -13,12 +13,20 @@ type Query {
     @aws_cognito_user_pools
     @aws_auth(cognito_groups: ["Admin"])
   getBusinessesWithOptions(
-    rcsc: String! #region_country_state_city
+    region: String!
+    csc: String! #country_state_city
     filter: BusinessFilterInput
+    limit: Int
     nextToken: String
-  ): [Business] @aws_cognito_user_pools
-  getBusinessByLocationAndSlug(rcsc: String!, slug: String!): Business
+  ): BusinessConnection @aws_cognito_user_pools
+  getFeaturedBusinesses(
+    filter: BusinessFilterInput
+    limit: Int
+    nextToken: String
+  ): BusinessConnection @aws_cognito_user_pools
+  getBusinessByLocationAndSlug(csc: String!, slug: String!): Business
     @aws_cognito_user_pools
+  getBusinessBySlug(slug: String!): BusinessConnection @aws_cognito_user_pools
 }
 
 type Mutation {
@@ -80,12 +88,22 @@ type Business @aws_cognito_user_pools @aws_iam {
   address: String!
   email: String!
   slug: String!
-  rcsc: String!
+  csc: String!
+  region: String!
+  city: String!
+  state: String!
+  website: String
+  phone: String
   description: String
   headerImage: String
   bodyImages: [String]
   tags: [String]
   industry: String
+}
+
+type BusinessConnection @aws_iam @aws_cognito_user_pools {
+  items: [Business]
+  nextToken: String
 }
 
 input BusinessFilterInput {
@@ -98,7 +116,12 @@ input CreateBusinessInput {
   address: String!
   email: String!
   slug: String!
-  rcsc: String!
+  csc: String!
+  region: String!
+  city: String!
+  state: String!
+  website: String
+  phone: String
   description: String
   headerImage: String
   bodyImages: [String]
@@ -113,7 +136,7 @@ input InviteBusinessInput {
   countryShortCode: String!
   createdBy: ID!
   temporaryPassword: String!
-  phoneNumber: String!
+  phone: String!
   country: String!
   state: String!
   city: String!

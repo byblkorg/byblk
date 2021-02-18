@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import Filter from "./Filter";
-import { BusinessType } from "types";
+import { Industries } from "services";
 
-export const defaultState = BusinessType.restaurant;
+// export const defaultState = Industries.restaurant;
 
 export default function FilterBar({
   style = "default",
   onSelectFilter,
   onActiveCategoryChange,
+  controlledActiveCategory,
 }: {
   style?: "default" | "minimal";
-  onSelectFilter?: (category: BusinessType) => void;
-  onActiveCategoryChange?: (category: BusinessType) => void;
+  onSelectFilter?: (category: Industries) => void;
+  onActiveCategoryChange?: (category: Industries | string) => void;
+  controlledActiveCategory?: string;
 }) {
-  const [activeCategory, setActiveCategory] = useState<BusinessType>(
-    onSelectFilter ? null : defaultState
+  const [activeCategory, setActiveCategory] = useState<Industries | string>(
+    onSelectFilter ? null : ""
   );
 
   useEffect(() => {
@@ -28,16 +30,20 @@ export default function FilterBar({
       horizontal
       showsHorizontalScrollIndicator={false}
     >
-      {Object.values(BusinessType).map((category, index) => {
+      {Object.values(Industries).map((category, index) => {
         return (
           <Filter
             category={category}
-            active={onSelectFilter ? true : category === activeCategory}
+            active={
+              onSelectFilter
+                ? category === controlledActiveCategory
+                : category === activeCategory
+            }
             key={index}
             onClick={() => {
               onSelectFilter
-                ? onSelectFilter(BusinessType[category])
-                : setActiveCategory(BusinessType[category]);
+                ? onSelectFilter(Industries[category])
+                : setActiveCategory(Industries[category]);
             }}
             style={style}
           />

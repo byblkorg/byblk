@@ -1,19 +1,8 @@
 {
-    "version" : "2017-02-28",
-    "operation" : "Query",
-    "query" : {
-        "expression" : "#rcsc = :rcsc AND #slug >= :slug",
-        "expressionNames" : {
-            "#rcsc": "rcsc",
-            "#slug": "slug",
-        },
-        "expressionValues" : {
-            ":rcsc": { "S" : "$context.args.rcsc" },
-            ":slug": { "S" : "$context.args.slug" },
-        }
-    },
-    "index" : "rcsc-index",
-    "scanIndexForward" : false,
-    "consistentRead" : false,
-    "select" : "ALL_ATTRIBUTES"
+    "version": "2017-02-28",
+    "operation": "GetItem",
+    "key": {
+        "csc": $util.dynamodb.toDynamoDBJson($ctx.args.csc),
+        "slug": $util.dynamodb.toDynamoDBJson($ctx.args.slug),
+    }
 }

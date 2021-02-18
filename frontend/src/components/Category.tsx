@@ -12,11 +12,13 @@ import appcontext from "appcontext";
 interface CategoryProps {
   title: string;
   onPress: () => void;
+  active: boolean;
 }
 
 export default function Category({
   title = "",
   onPress = () => {},
+  active = false,
 }: CategoryProps) {
   const ctx = useContext(appcontext);
   const theme = createTheme(ctx?.darkmode);
@@ -27,7 +29,7 @@ export default function Category({
         style={styles.image}
         source={{ uri: "https://picsum.photos/200/300" }}
       >
-        <Overlay>
+        <Overlay active={active}>
           <Text style={[theme.fonts.cotham, styles.text]}>{title}</Text>
         </Overlay>
       </ImageBackground>
@@ -46,16 +48,17 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: "black",
-    opacity: 0.5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  // overlay: {
+  //   flex: 1,
+  //   backgroundColor: "black",
+  //   opacity: 0.5,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
   text: {
     color: "white",
     fontSize: 24,
     letterSpacing: 1,
+    textAlign: "center",
   },
 });

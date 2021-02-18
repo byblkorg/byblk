@@ -19,7 +19,7 @@ export const handler: Handler = async (
 
     const params = {
       UserPoolId: process.env.POOL_ID,
-      Username: invitee.phoneNumber,
+      Username: invitee.phone,
       TemporaryPassword: invitee.temporaryPassword,
       UserAttributes: [
         {
@@ -28,7 +28,7 @@ export const handler: Handler = async (
         },
         {
           Name: "phone_number",
-          Value: invitee.phoneNumber,
+          Value: invitee.phone,
         },
         {
           Name: "email_verified",

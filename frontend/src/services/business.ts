@@ -1,4 +1,4 @@
-export enum BusinessType {
+export enum Industries {
   restaurant = "restaurant",
   grocery = "grocery",
   bakery = "bakery",

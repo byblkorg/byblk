@@ -4,22 +4,24 @@ Resources:
     Properties:
       TableName: ByBlkBusinessTable-${self:custom.env}
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: slug
           AttributeType: S
-        - AttributeName: rcsc # region_country_state_city
+        - AttributeName: csc # country_state_city
           AttributeType: S
-        - AttributeName: slug # business name in snake
+        - AttributeName: region
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: slug
           KeyType: HASH
+        - AttributeName: csc
+          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       GlobalSecondaryIndexes:
-        - IndexName: rcsc-index
+        - IndexName: csc-index
           KeySchema:
-            - AttributeName: rcsc
+            - AttributeName: region
               KeyType: HASH
-            - AttributeName: slug
+            - AttributeName: csc
               KeyType: RANGE
           Projection:
             ProjectionType: ALL

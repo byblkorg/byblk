@@ -9,13 +9,14 @@ export interface Invitee {
   description: string;
   headerImage: string;
   tags: string[];
-  phoneNumber?: string;
+  phone?: string;
   email?: string;
   temporaryPassword?: string;
   businessId?: string;
   country?: string;
   state?: string;
   city?: string;
+  website?: string;
 }
 
 export interface Invite {
@@ -24,6 +25,23 @@ export interface Invite {
   createdBy: number;
   expires: number;
   businessId: string;
+}
+
+export interface Business {
+  name: string;
+  address: string;
+  email: string;
+  slug: string;
+  csc: string;
+  region: string;
+  city: string;
+  state: string;
+  website: string;
+  phone: string;
+  description: string;
+  headerImage: string;
+  bodyImages: string;
+  tags: string[];
 }
 
 // export interface Tags {
