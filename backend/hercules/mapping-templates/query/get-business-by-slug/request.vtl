@@ -10,6 +10,7 @@
             ":slug": { "S" : "$context.args.slug" },
         }
     },
+    "index" : "slug-index",
     "nextToken" : $util.toJson($util.defaultIfNullOrEmpty($ctx.args.nextToken, null)),
     "scanIndexForward" : false,
     "limit" : $util.defaultIfNull($context.args.limit, 20),

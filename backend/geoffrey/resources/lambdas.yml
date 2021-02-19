@@ -6,6 +6,7 @@ readEmail:
   timeout: 30
   environment:
     bucketName: marvin-emails
+    SENDGRID_API_KEY: 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
   layers:
     - arn:aws:lambda:${self:custom.region}:750494921159:layer:AwsAppsyncLayer-${self:custom.env}:1
   role: arn:aws:iam::750494921159:role/geoffrey-dev

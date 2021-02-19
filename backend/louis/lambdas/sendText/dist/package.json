@@ -8,7 +8,7 @@
     "local": "bash utils/test.sh",
     "zipit": "bash utils/zipit.sh",
     "package": "tsc && npm run zipit",
-    "deploy": "aws lambda update-function-code --region us-east-1 --profile byblk --function-name SendText --zip-file fileb://sendText.zip"
+    "deploy": "aws lambda update-function-code --region us-east-1 --profile byblk --function-name SendText-Dev --zip-file fileb://sendText.zip"
   },
   "author": "Ashton Morris",
   "license": "ISC",

@@ -16,7 +16,7 @@ function parseString(str: string) {
 }
 
 function slugifyString(str: string) {
-  return str.toLowerCase().replace(/ /g, "_");
+  return parseString(str).replace(/ /g, "_");
 }
 
 export default function createBusiness(invitee: Invitee) {
