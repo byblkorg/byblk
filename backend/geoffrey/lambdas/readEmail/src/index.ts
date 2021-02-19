@@ -7,6 +7,7 @@ import {
   updateBusiness,
   sendEmailReceipt,
 } from "./functions";
+import { uploadPhoto } from "./upload-photo";
 
 export const handler: Handler = async (
   event: any,
@@ -30,15 +31,24 @@ export const handler: Handler = async (
 
       if (subject) {
         const invite = await getInvite(subject);
-        const shouldWeProceed = await isInviteValid(invite);
+        const weShouldProceed = await isInviteValid(invite);
 
-        console.log(invite);
+        if (weShouldProceed) {
+          const thereIsAnAttachment = email.attachments[0]?.content;
+          if (thereIsAnAttachment) {
+            const filePath = `${invite.businessId}/public/header.jpeg`;
 
-        if (shouldWeProceed) {
-          await updateBusiness(invite.businessId, {
-            description: email.text,
-            // headerImage: email.attachments[0].content.toString("base64"),
-          });
+            await uploadPhoto(email.attachments[0].content, filePath);
+
+            await updateBusiness(invite.businessId, {
+              description: email.text,
+              headerImage: `https://byblk-business-bucket.s3.amazonaws.com/${filePath}`,
+            });
+          } else {
+            await updateBusiness(invite.businessId, {
+              description: email.text,
+            });
+          }
 
           if (email.from?.text) {
             await sendEmailReceipt(email.from?.text);
