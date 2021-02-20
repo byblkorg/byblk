@@ -1,7 +1,13 @@
 import appcontext from "appcontext";
 import React, { useContext } from "react";
-import { StyleSheet, SafeAreaView, View, Text, Switch } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  Switch,
+  TouchableOpacity,
+} from "react-native";
 import { Auth } from "screens";
 import createTheme, { colors } from "theme";
 import { Auth as AmplifyAuth } from "aws-amplify";

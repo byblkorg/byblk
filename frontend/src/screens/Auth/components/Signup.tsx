@@ -1,8 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { TextInput, Button } from "components";
 import appcontext from "appcontext";
 import AuthContext from "../authcontext";
+import {
+  americanizePhoneNumber,
+  normalizePhoneStringInput,
+  handleSignUp,
+} from "../functions";
+import { AuthState } from "../types";
 
 const styles = StyleSheet.create({
   text: {
@@ -11,12 +17,63 @@ const styles = StyleSheet.create({
   marginBottomContainer: {
     marginTop: 10,
     marginBottom: 10,
+    width: "20%",
+    alignItems: "center",
   },
 });
 
 export default function Signup() {
   const { theme } = useContext(appcontext);
   const { setAuthState } = useContext(AuthContext);
+  const [state, setState] = useState({
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  function signUp() {
+    handleSignUp({
+      username: americanizePhoneNumber(normalizePhoneStringInput(state.phone)),
+      password: state.password,
+      attributes: {},
+      onSuccess: () => {
+        setAuthState(AuthState.Login);
+      },
+      onFail: (err, message) => {
+        setError(message);
+      },
+    });
+  }
+
+  function updateState(key: string, value: string) {
+    setState((currState) => ({ ...currState, [key]: value }));
+  }
+
+  function isValid({
+    phone,
+    password,
+    confirmPassword,
+  }: {
+    phone?: string;
+    password?: string;
+    confirmPassword?: string;
+  }): boolean {
+    if (phone) {
+      return phone.length > 0;
+    }
+
+    if (password) {
+      return password.length > 0;
+    }
+
+    if (confirmPassword) {
+      return confirmPassword === state.password;
+    }
+
+    return false;
+  }
+
   return (
     <>
       <View style={{ marginTop: 30, marginBottom: 30 }}>
@@ -31,14 +88,15 @@ export default function Signup() {
           Create Account
         </Text>
 
-        <Text style={styles.text}>We're happy to have you!</Text>
+        <Text style={styles.text}>We're happy to have you on board!</Text>
       </View>
 
       <View style={styles.marginBottomContainer}>
         <TextInput
-          icon="mail"
-          placeholder="Enter your email"
-          validator={() => false}
+          icon="phone"
+          placeholder="Enter your phone number"
+          validator={() => isValid({ phone: state.phone })}
+          onChangeText={(txt) => updateState("phone", txt)}
         />
       </View>
 
@@ -46,7 +104,8 @@ export default function Signup() {
         <TextInput
           icon="lock"
           placeholder="Enter your password"
-          validator={() => true}
+          validator={() => isValid({ password: state.password })}
+          onChangeText={(txt) => updateState("password", txt)}
           secureTextEntry
         />
       </View>
@@ -55,17 +114,16 @@ export default function Signup() {
         <TextInput
           icon="lock"
           placeholder="Confirm your password"
-          validator={() => true}
+          validator={() => isValid({ confirmPassword: state.confirmPassword })}
+          onChangeText={(txt) => updateState("confirmPassword", txt)}
           secureTextEntry
         />
       </View>
 
+      {error && <Text style={[styles.text, { color: "red" }]}>{error}</Text>}
+
       <View style={styles.marginBottomContainer}>
-        <Button
-          label="Signup"
-          onPress={() => console.log("yer")}
-          variant="primary"
-        />
+        <Button label="Signup" onPress={() => signUp()} variant="primary" />
       </View>
     </>
   );

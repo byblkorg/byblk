@@ -1,17 +1,14 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { TextInput, Button } from "components";
 import appcontext from "appcontext";
-import { colors } from "theme";
 import { AuthState } from "../types";
 import AuthContext from "../authcontext";
-import { useNavigation } from "@react-navigation/native";
 import {
-  handleLogin,
   americanizePhoneNumber,
   normalizePhoneStringInput,
+  handleConfirmPasswordChange,
 } from "../functions";
-import { Auth } from "aws-amplify";
 
 const styles = StyleSheet.create({
   text: {
@@ -25,15 +22,29 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Login() {
-  const { theme, isAuthenticated } = useContext(appcontext);
+export default function ConfirmPassword() {
+  const { theme } = useContext(appcontext);
   const { setAuthState } = useContext(AuthContext);
-  const navigation = useNavigation();
   const [state, setState] = useState({
     phone: "",
     password: "",
+    code: "",
   });
   const [error, setError] = useState<string | undefined>(undefined);
+
+  function confirmPasswordChange() {
+    handleConfirmPasswordChange({
+      username: americanizePhoneNumber(normalizePhoneStringInput(state.phone)),
+      password: state.password,
+      code: state.code,
+      onSuccess: () => {
+        setAuthState(AuthState.Login);
+      },
+      onFail: (err, message) => {
+        setError(message);
+      },
+    });
+  }
 
   function updateState(key: string, value: string) {
     setState((currState) => ({ ...currState, [key]: value }));
@@ -42,9 +53,11 @@ export default function Login() {
   function isValid({
     phone,
     password,
+    code,
   }: {
     phone?: string;
     password?: string;
+    code?: string;
   }): boolean {
     if (phone) {
       return phone.length > 0;
@@ -52,6 +65,10 @@ export default function Login() {
 
     if (password) {
       return password.length > 0;
+    }
+
+    if (code) {
+      return code.length > 0;
     }
 
     return false;
@@ -68,38 +85,42 @@ export default function Login() {
             styles.text,
           ]}
         >
-          Welcome back
+          Confirm Password Change
         </Text>
 
-        <Text style={styles.text}>Login below with your credentials</Text>
+        <Text style={styles.text}>
+          Please check your phone for the verification code
+        </Text>
       </View>
 
       <View style={styles.marginBottomContainer}>
         <TextInput
           icon="phone"
           placeholder="Enter your phone number"
+          validator={() => isValid({ phone: state.phone })}
           error={!!error}
           onChangeText={(txt) => updateState("phone", txt)}
-          validator={() =>
-            isValid({
-              phone: state.phone,
-            })
-          }
         />
       </View>
 
       <View style={styles.marginBottomContainer}>
         <TextInput
           icon="lock"
-          placeholder="Enter your password"
+          placeholder="Enter your new password"
+          validator={() => isValid({ password: state.password })}
           error={!!error}
-          validator={() =>
-            isValid({
-              password: state.password,
-            })
-          }
           onChangeText={(txt) => updateState("password", txt)}
           secureTextEntry
+        />
+      </View>
+
+      <View style={styles.marginBottomContainer}>
+        <TextInput
+          icon="code"
+          placeholder="Enter verification code"
+          validator={() => isValid({ code: state.code })}
+          error={!!error}
+          onChangeText={(txt) => updateState("code", txt)}
         />
       </View>
 
@@ -107,43 +128,11 @@ export default function Login() {
 
       <View style={styles.marginBottomContainer}>
         <Button
-          label="Login"
-          onPress={() => {
-            handleLogin({
-              username: americanizePhoneNumber(
-                normalizePhoneStringInput(state.phone)
-              ),
-              password: state.password,
-              onSuccess: async (res) => {
-                if (res.challengeName === "NEW_PASSWORD_REQUIRED") {
-                  await Auth.completeNewPassword(res, state.password, null);
-
-                  setError(
-                    "Please go to forgot password and change your password"
-                  );
-                } else {
-                  isAuthenticated(true);
-                  navigation.navigate("welcome");
-                }
-              },
-              onFail: (res) => {
-                setError(res.message);
-              },
-            });
-          }}
+          label="Confirm Password Change"
+          onPress={() => confirmPasswordChange()}
           variant="primary"
         />
       </View>
-
-      <TouchableOpacity
-        onPress={() => {
-          setAuthState(AuthState.ForgotPassword);
-        }}
-      >
-        <Text style={[styles.text, { color: colors.emerald }]}>
-          Forgot password
-        </Text>
-      </TouchableOpacity>
     </>
   );
 }

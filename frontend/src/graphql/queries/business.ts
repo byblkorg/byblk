@@ -48,19 +48,21 @@ export const getFeaturedBusinesses = gql`
 export const getBusinessByLocationAndSlug = gql`
   query getBusinessByLocationAndSlug($csc: String!, $slug: String!) {
     getBusinessByLocationAndSlug(csc: $csc, slug: $slug) {
-      id
-      name
-      address
-      headerImage
-      description
-      phone
-      website
-      tags
-      city
-      state
-      region
-      csc
-      slug
+      items {
+        id
+        name
+        address
+        headerImage
+        description
+        phone
+        website
+        tags
+        city
+        state
+        region
+        csc
+        slug
+      }
     }
   }
 `;
@@ -140,7 +142,8 @@ export async function getBusiness(csc: string, slug: string) {
       slug,
     })
   );
-  return businesses;
+
+  return businesses.data.getBusinessByLocationAndSlug.items[0];
 }
 
 export async function fetchBusinessWithFilters(
