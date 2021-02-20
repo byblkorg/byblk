@@ -24,7 +24,7 @@ type Query {
     limit: Int
     nextToken: String
   ): BusinessConnection @aws_cognito_user_pools
-  getBusinessByLocationAndSlug(csc: String!, slug: String!): Business
+  getBusinessByLocationAndSlug(csc: String!, slug: String!): BusinessConnection
     @aws_cognito_user_pools
   getBusinessBySlug(slug: String!): BusinessConnection @aws_cognito_user_pools
 }

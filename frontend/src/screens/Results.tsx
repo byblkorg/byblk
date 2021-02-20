@@ -5,8 +5,9 @@ import {
   SafeAreaView,
   View,
   FlatList,
-  Platform,
   TouchableOpacity,
+  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { createTheme } from "theme";
 import {
@@ -35,137 +36,10 @@ export default function Results({
     route.params?.filter ?? ""
   );
   const [activeCountry, updateActiveCountry] = useState("us");
-  const [_, setBusinesses] = useState<Business[]>([]);
-  const businesses = [
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-    {
-      name: "hello",
-      address: "hello",
-      email: "hello",
-      slug: "hello",
-      csc: "hello",
-      region: "hello",
-      city: "hello",
-      state: "hello",
-      website: "hello",
-      phone: "hello",
-      description: "hello",
-      headerImage: "hello",
-      bodyImages: "hello",
-      tags: "hello",
-    },
-  ];
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const windowWidth = useWindowDimensions().width;
+  const numRows = Math.floor(windowWidth / 230);
+
   useEffect(() => {
     init();
   }, [activeCountry, activeCategory]);
@@ -228,15 +102,14 @@ export default function Results({
 
         <FlatList
           showsHorizontalScrollIndicator={false}
+          style={{ flex: 1 }}
           data={businesses}
-          numColumns={6}
+          numColumns={numRows <= 7 ? (numRows == 2 ? numRows : numRows - 1) : 7}
+          key={`_${numRows}`}
+          keyExtractor={(item) => `_${numRows}` + item.slug}
           contentContainerStyle={{
-            alignItems: Platform.OS !== "web" ? "center" : undefined,
-            padding: 8,
-            flex: 1,
-            width: "100%",
-            flexWrap: "wrap",
-            justifyContent: "center",
+            // alignItems: "center",
+            justifyContent: "space-between",
           }}
           ListHeaderComponent={
             regions.length && (

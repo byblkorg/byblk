@@ -7,6 +7,7 @@ import {
   Login,
   ForgotPassword,
   Signup,
+  Confirm,
 } from "./components";
 import { colors } from "theme";
 import { AuthState } from "./types";
@@ -17,7 +18,7 @@ import { RootStackParamList } from "App";
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Auth"
+  "auth"
 >;
 
 type AuthProps = {
@@ -30,7 +31,7 @@ function Footer() {
 
   return (
     <View style={styles.container}>
-      <SocialLogin />
+      {/* <SocialLogin /> */}
 
       <View style={styles.linkBtn}>
         <Text style={[styles.text, { color: "white" }]}>
@@ -93,6 +94,13 @@ function renderLayout(authState: AuthState) {
       return (
         <Wrapper>
           <Signup />
+        </Wrapper>
+      );
+
+    case AuthState.ConfirmPassword:
+      return (
+        <Wrapper>
+          <Confirm />
         </Wrapper>
       );
 

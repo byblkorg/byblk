@@ -27,7 +27,7 @@ export default function Category({
     <TouchableOpacity style={styles.container} {...{ onPress }}>
       <ImageBackground
         style={styles.image}
-        source={{ uri: "https://picsum.photos/200/300" }}
+        // source={{ uri: "https://picsum.photos/200/300" }}
       >
         <Overlay active={active}>
           <Text style={[theme.fonts.cotham, styles.text]}>{title}</Text>

@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Welcome"
+  "welcome"
 >;
 
 type WelcomeSpinnerProps = {
@@ -135,7 +135,7 @@ export default function WelcomeSpinner({ navigation }: WelcomeSpinnerProps) {
                   onPress={async () => {
                     if (last) {
                       await storeData(true);
-                      navigation.replace("Home");
+                      navigation.replace("home");
                     } else {
                       if (scroll.current) {
                         scroll.current

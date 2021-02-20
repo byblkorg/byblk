@@ -75,8 +75,12 @@ export async function handleLogin({
   onSuccess: OnSuccess<CognitoUser | any>;
   onFail: OnFail;
 }) {
-  const res = await Auth.signIn(username, password);
-  onSuccess(res);
+  try {
+    const res = await Auth.signIn(username, password);
+    onSuccess(res);
+  } catch (e) {
+    await handleError(e, onFail);
+  }
 }
 
 export function handleSignUp({

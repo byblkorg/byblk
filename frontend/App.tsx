@@ -1,5 +1,12 @@
-import React, { useState, useMemo, useEffect, useContext } from "react";
-import { StatusBar } from "react-native";
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useContext,
+  Suspense,
+  lazy,
+} from "react";
+import { Platform, StatusBar } from "react-native";
 import AppContext from "./appcontext";
 import { useFonts } from "@use-expo/font";
 import createTheme from "theme";
@@ -13,6 +20,7 @@ import appcontext from "./appcontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Business as BusinessType } from "@gcmp/types";
 import { createURL } from "expo-linking";
+const WebStyles = lazy(() => import("./src/styles/Web"));
 
 const prefix = createURL("/");
 
@@ -23,6 +31,8 @@ const config = {
         business: "business/:region/:csc/:slug",
         home: "home",
         results: "results",
+        welcome: "welcome",
+        auth: "auth",
       },
     },
   },
@@ -76,14 +86,18 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
-  const { isAuthenticated, hasReadIntro } = useContext(appcontext);
+  const { authenticated, hasReadIntro } = useContext(appcontext);
 
-  if (!isAuthenticated) {
-    return <Stack.Screen name="auth" component={Auth} />;
-  }
-
-  if (!hasReadIntro) {
-    return <Stack.Screen name="welcome" component={WelcomeSpinner} />;
+  if (!authenticated) {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          header: () => null,
+        }}
+      >
+        <Stack.Screen name="auth" component={Auth} />
+      </Stack.Navigator>
+    );
   }
 
   return (
@@ -92,6 +106,9 @@ const MainStack = () => {
         header: () => null,
       }}
     >
+      {!hasReadIntro && (
+        <Stack.Screen name="welcome" component={WelcomeSpinner} />
+      )}
       <Stack.Screen name="home" component={Home} />
       <Stack.Screen name="business" component={Business} />
       <Stack.Screen name="results" component={Results} />
@@ -129,7 +146,7 @@ export default function App() {
     } else isAuthenticated(false);
   }
 
-  if (fontsLoaded && authenticated) {
+  if (fontsLoaded) {
     return (
       <AppContext.Provider
         value={{
@@ -154,6 +171,9 @@ export default function App() {
             <Drawer.Screen name="app" component={MainStack} />
           </Drawer.Navigator>
         </NavigationContainer>
+        <Suspense fallback={<></>}>
+          {Platform.OS === "web" && <WebStyles />}
+        </Suspense>
       </AppContext.Provider>
     );
   } else {

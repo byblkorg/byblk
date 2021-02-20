@@ -31,8 +31,8 @@ export default function BusinessScreen({ route }: BusinessProps) {
   }, []);
 
   async function init() {
-    const businessRes = await getBusiness(csc, slug);
-    setBusiness(businessRes.data.getBusinessByLocationAndSlug);
+    const business = await getBusiness(csc, slug);
+    setBusiness(business);
   }
 
   return (

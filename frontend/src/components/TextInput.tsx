@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,9 +16,10 @@ type InputState = typeof Valid | typeof Invalid | typeof Pristine;
 interface Props extends TextInputProps {
   icon: string;
   validator: (input: string) => boolean;
+  error?: boolean;
 }
 
-export default function TextInput({ icon, validator, ...rest }: Props) {
+export default function TextInput({ icon, validator, error, ...rest }: Props) {
   const [input, setInput] = useState("");
   const [state, setState] = useState<InputState>(Pristine);
   const color =
@@ -29,9 +30,13 @@ export default function TextInput({ icon, validator, ...rest }: Props) {
   }
 
   function validate() {
-    const valid = validator(input);
+    const valid = error ? false : validator(input);
     setState(valid);
   }
+
+  useEffect(() => {
+    error && setState(Invalid);
+  }, [error]);
 
   return (
     <View style={[styles.container, { borderColor: color }]}>
