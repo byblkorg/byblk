@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    zIndex: 999,
   },
   block: {
     marginBottom: 10,
