@@ -171,6 +171,7 @@ export default function App() {
             <Drawer.Screen name="app" component={MainStack} />
           </Drawer.Navigator>
         </NavigationContainer>
+
         <Suspense fallback={<></>}>
           {Platform.OS === "web" && <WebStyles />}
         </Suspense>
