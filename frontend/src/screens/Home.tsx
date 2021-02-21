@@ -207,7 +207,7 @@ export default function Discover({
                 key={index}
                 {...{
                   title: data.name,
-                  subtitle: data.address,
+                  subtitle: `${data.city}, ${data.state}`,
                   imageSrc: data.headerImage,
                 }}
               />
@@ -250,7 +250,7 @@ export default function Discover({
                 key={index}
                 {...{
                   title: data.name,
-                  subtitle: data.address,
+                  subtitle: `${data.city}, ${data.state}`,
                   imageSrc: data.headerImage,
                 }}
               />

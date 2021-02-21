@@ -86,17 +86,15 @@ export async function handleLogin({
 export function handleSignUp({
   username,
   password,
-  attributes,
   onSuccess = defaultOnSuccess,
   onFail = defaultOnFail,
 }: {
   username: string;
   password: string;
-  attributes: any;
   onSuccess: OnSuccess;
   onFail: OnFail;
 }): void {
-  const signUp = () => Auth.signUp({ username, password, attributes });
+  const signUp = () => Auth.signUp({ username, password });
   handleAuthOperation(signUp, onSuccess, onFail);
 }
 

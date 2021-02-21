@@ -5,4 +5,5 @@ export enum Industries {
   home = "home",
   cosmetic = "cosmetic",
   wellness = "wellness",
+  clothing = "clothing",
 }

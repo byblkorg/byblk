@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     width: "100%",
     padding: 5,
+    maxWidth: 300,
   },
   iconContainer: {
     padding: 10,

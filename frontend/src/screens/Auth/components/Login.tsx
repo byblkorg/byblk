@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
   marginBottomContainer: {
     marginTop: 10,
     marginBottom: 10,
-    width: "20%",
+    width: "70%",
     alignItems: "center",
   },
 });
 
 export default function Login() {
-  const { theme, isAuthenticated } = useContext(appcontext);
+  const { theme, isAuthenticated, hasReadIntro } = useContext(appcontext);
   const { setAuthState } = useContext(AuthContext);
   const navigation = useNavigation();
   const [state, setState] = useState({
@@ -123,11 +123,18 @@ export default function Login() {
                   );
                 } else {
                   isAuthenticated(true);
-                  navigation.navigate("welcome");
+
+                  if (hasReadIntro) {
+                    navigation.navigate("home");
+                  } else {
+                    navigation.navigate("welcome");
+                  }
                 }
               },
-              onFail: (res) => {
-                setError(res.message);
+              onFail: (err) => {
+                if (err && err.message) {
+                  setError(err.message);
+                }
               },
             });
           }}

@@ -65,6 +65,13 @@ const icons = {
       color={icons.getIconColor(darkmode, active)}
     />
   ),
+  clothing: ({ active, darkmode }: IconFunctionProps) => (
+    <MaterialCommunityIcons
+      name="tshirt-crew"
+      size={iconFontSize}
+      color={icons.getIconColor(darkmode, active)}
+    />
+  ),
 };
 
 export default function Filter({

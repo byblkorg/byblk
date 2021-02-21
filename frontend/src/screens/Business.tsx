@@ -4,7 +4,7 @@ import appcontext from "appcontext";
 import createTheme from "theme";
 import { Tag } from "components";
 import { useNavigation } from "@react-navigation/native";
-import UberEats from "../components/UberEats";
+import StickyHeader from "../components/StickyHeader";
 import { ScreenProps } from "types";
 import { getBusiness } from "graphql/queries";
 import { Business } from "@gcmp/types";
@@ -36,7 +36,7 @@ export default function BusinessScreen({ route }: BusinessProps) {
   }
 
   return (
-    <UberEats
+    <StickyHeader
       title={business?.name}
       imageSrc={{ uri: business?.headerImage }}
       business={business}

@@ -1,5 +1,5 @@
 import appcontext from "appcontext";
-import React, { useContext } from "react";
+import React, { useContext, Suspense, lazy } from "react";
 import {
   StyleSheet,
   SafeAreaView,
@@ -7,10 +7,12 @@ import {
   Text,
   Switch,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { Auth } from "screens";
 import createTheme, { colors } from "theme";
 import { Auth as AmplifyAuth } from "aws-amplify";
+const WebStyles = lazy(() => import("../styles/Web"));
 
 export default function Drawer() {
   const { darkmode, setDarkMode, user, isAuthenticated } = useContext(
@@ -63,6 +65,10 @@ export default function Drawer() {
           />
         </View>
       </View>
+
+      <Suspense fallback={<></>}>
+        {Platform.OS === "web" && <WebStyles />}
+      </Suspense>
     </SafeAreaView>
   );
 }

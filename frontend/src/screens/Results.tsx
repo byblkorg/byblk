@@ -6,7 +6,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Dimensions,
   useWindowDimensions,
 } from "react-native";
 import { createTheme } from "theme";
@@ -104,11 +103,10 @@ export default function Results({
           showsHorizontalScrollIndicator={false}
           style={{ flex: 1 }}
           data={businesses}
-          numColumns={numRows <= 7 ? (numRows == 2 ? numRows : numRows - 1) : 7}
+          numColumns={numRows <= 7 ? (numRows <= 2 ? 2 : numRows - 1) : 7}
           key={`_${numRows}`}
           keyExtractor={(item) => `_${numRows}` + item.slug}
           contentContainerStyle={{
-            // alignItems: "center",
             justifyContent: "space-between",
           }}
           ListHeaderComponent={

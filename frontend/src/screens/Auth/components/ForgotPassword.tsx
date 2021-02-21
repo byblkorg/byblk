@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   marginBottomContainer: {
     marginTop: 10,
     marginBottom: 10,
-    width: "20%",
+    width: "70%",
     alignItems: "center",
   },
 });
@@ -36,8 +36,10 @@ export default function ForgotPassword() {
       onSuccess: () => {
         setAuthState(AuthState.ConfirmPassword);
       },
-      onFail: (err, message) => {
-        setError(message);
+      onFail: (err) => {
+        if (err && err.message) {
+          setError(err.message);
+        }
       },
     });
   }

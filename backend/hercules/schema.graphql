@@ -85,7 +85,7 @@ input SettingsInput {
 type Business @aws_cognito_user_pools @aws_iam {
   id: ID!
   name: String!
-  address: String!
+  address: String
   email: String!
   slug: String!
   csc: String!
@@ -113,7 +113,7 @@ input BusinessFilterInput {
 
 input CreateBusinessInput {
   name: String!
-  address: String!
+  address: String
   email: String!
   slug: String!
   csc: String!
@@ -130,7 +130,7 @@ input CreateBusinessInput {
 
 input InviteBusinessInput {
   name: String!
-  address: String!
+  address: String
   email: String!
   regionName: String!
   countryShortCode: String!

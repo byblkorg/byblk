@@ -1,7 +1,9 @@
 body {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  touch-action: none;
+  -ms-touch-action: none;
 }
 
-.css-view-1dbjc4n {
-  opacity: 1;
+div {
+  opacity: 1 !important;
 }

@@ -7,9 +7,15 @@ type ButtonProps = {
   variant: "default" | "primary";
   label: string;
   onPress: () => void;
+  disabled?: boolean;
 };
 
-export default function Button({ variant, label, onPress }: ButtonProps) {
+export default function Button({
+  variant,
+  label,
+  onPress,
+  disabled,
+}: ButtonProps) {
   const backgroundColor =
     variant === "primary" ? colors.emerald : "rgba(12, 13, 52, 0.05)";
   const color = variant === "primary" ? "white" : "#0C0D34";
@@ -17,7 +23,7 @@ export default function Button({ variant, label, onPress }: ButtonProps) {
   return (
     <TouchableOpacity
       style={[styles.container, { backgroundColor }]}
-      {...{ onPress }}
+      {...{ onPress, disabled }}
     >
       <View>
         <Text style={[styles.label, { color }]}>{label}</Text>

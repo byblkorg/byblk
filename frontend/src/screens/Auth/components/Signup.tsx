@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   marginBottomContainer: {
     marginTop: 10,
     marginBottom: 10,
-    width: "20%",
+    width: "70%",
     alignItems: "center",
   },
 });
@@ -36,12 +36,13 @@ export default function Signup() {
     handleSignUp({
       username: americanizePhoneNumber(normalizePhoneStringInput(state.phone)),
       password: state.password,
-      attributes: {},
       onSuccess: () => {
         setAuthState(AuthState.Login);
       },
-      onFail: (err, message) => {
-        setError(message);
+      onFail: (err) => {
+        if (err && err.message) {
+          setError(err.message);
+        }
       },
     });
   }
@@ -123,7 +124,12 @@ export default function Signup() {
       {error && <Text style={[styles.text, { color: "red" }]}>{error}</Text>}
 
       <View style={styles.marginBottomContainer}>
-        <Button label="Signup" onPress={() => signUp()} variant="primary" />
+        <Button
+          label="Signup"
+          onPress={() => signUp()}
+          variant="primary"
+          disabled={state.confirmPassword !== state.password}
+        />
       </View>
     </>
   );

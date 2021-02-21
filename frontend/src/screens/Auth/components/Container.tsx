@@ -8,8 +8,6 @@ interface ContainerProps {
   footer: ReactNode;
 }
 
-export const assets = [require("../../../../assets/images/cloth-pattern.png")];
-
 const { width } = Dimensions.get("window");
 const ASPECT_RATIO = 750 / 1125;
 const height = width * ASPECT_RATIO;

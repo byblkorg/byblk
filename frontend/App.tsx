@@ -1,12 +1,5 @@
-import React, {
-  useState,
-  useMemo,
-  useEffect,
-  useContext,
-  Suspense,
-  lazy,
-} from "react";
-import { Platform, StatusBar } from "react-native";
+import React, { useState, useMemo, useEffect, useContext } from "react";
+import { StatusBar } from "react-native";
 import AppContext from "./appcontext";
 import { useFonts } from "@use-expo/font";
 import createTheme from "theme";
@@ -20,7 +13,6 @@ import appcontext from "./appcontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Business as BusinessType } from "@gcmp/types";
 import { createURL } from "expo-linking";
-const WebStyles = lazy(() => import("./src/styles/Web"));
 
 const prefix = createURL("/");
 
@@ -47,9 +39,7 @@ const getData = async () => {
   try {
     const jsonValue = await AsyncStorage.getItem("hasReadIntro");
     return jsonValue != null ? JSON.parse(jsonValue) : null;
-  } catch (e) {
-    // error reading value
-  }
+  } catch (e) {}
 };
 
 Amplify.configure({
@@ -121,6 +111,7 @@ export default function App() {
   const [authenticated, isAuthenticated] = useState(false);
   const [hasReadIntro, readIntro] = useState(false);
   const [user, setUser] = useState(null);
+  const [initializing, isInitializing] = useState(true);
 
   const [fontsLoaded] = useFonts({
     CooperHewitt: require("./assets/fonts/CooperHewitt-Heavy.otf"),
@@ -143,10 +134,14 @@ export default function App() {
     if (user) {
       setUser(user);
       isAuthenticated(true);
-    } else isAuthenticated(false);
+      isInitializing(false);
+    } else {
+      isAuthenticated(false);
+      isInitializing(false);
+    }
   }
 
-  if (fontsLoaded) {
+  if (fontsLoaded && !initializing) {
     return (
       <AppContext.Provider
         value={{
@@ -171,10 +166,6 @@ export default function App() {
             <Drawer.Screen name="app" component={MainStack} />
           </Drawer.Navigator>
         </NavigationContainer>
-
-        <Suspense fallback={<></>}>
-          {Platform.OS === "web" && <WebStyles />}
-        </Suspense>
       </AppContext.Provider>
     );
   } else {
